@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodeTrack · Exercises</title>
+  <script>
+    (() => {
+      document.documentElement.dataset.theme = "light";
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="theme.js"></script>
+  <script defer src="app.js"></script>
+  <script defer src="script.js"></script>
+</head>
+<body data-requires-role="pro">
+  <div class="announcement">New CodeTrack classroom release is live. <a href="exercises.html">Explore the workspace →</a></div>
+  <div class="page">
+    <header class="nav">
+      <div class="brand">
+        <div class="brand-mark">C</div>
+        <span>CodeTrack</span>
+      </div>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="exercises.html" class="active">Exercises</a>
+        <a href="submissions.html">Submissions</a>
+        <a href="progress.html">Progress</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="ghost theme-toggle" type="button" data-theme-toggle aria-label="Toggle color theme">🌙</button>
+        <span class="pill hidden" data-role-badge></span>
+        <details class="auth-menu">
+          <summary class="ghost">Login</summary>
+          <div class="auth-dropdown">
+            <div class="auth-group-title">Student</div>
+            <a class="auth-link" href="login.html?role=student">Student sign in</a>
+            <a class="auth-link" href="signup.html?role=student">Student sign up</a>
+            <div class="auth-group-title">Teacher</div>
+            <a class="auth-link" href="login.html?role=teacher">Teacher sign in</a>
+            <a class="auth-link" href="signup.html?role=teacher">Teacher sign up</a>
+          </div>
+        </details>
+        <a class="solid" href="#exerciseForm" data-role-only="pro">Create exercise</a>
+        <a class="ghost hidden" href="#" data-logout>Logout</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero code-hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Teacher Exercise Workspace</p>
+          <h1>Create and manage the coding exercises students work on.</h1>
+          <p class="lead">Use this page to publish programming tasks, define expectations clearly, and maintain a reliable exercise library for every class or training batch.</p>
+          <div class="quick-stats" id="heroStats">
+            <div>
+              <strong id="statExercises">0</strong>
+              <span>Exercises live</span>
+            </div>
+            <div>
+              <strong id="statSubmissions">0</strong>
+              <span>Total submissions</span>
+            </div>
+            <div>
+              <strong id="statAttempts">0</strong>
+              <span>Avg attempts / exercise</span>
+            </div>
+          </div>
+        </div>
+        <div class="hero-card" data-role-only="pro">
+          <div class="floating-label">Teacher view</div>
+          <div class="mission-visual exercises-visual" aria-hidden="true">
+            <div class="mission-window">
+              <div class="mission-window-top">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <div class="mission-grid">
+                <div class="mission-column">
+                  <div class="mission-chip">Create</div>
+                  <div class="mission-line short"></div>
+                  <div class="mission-line"></div>
+                  <div class="mission-line mid"></div>
+                </div>
+                <div class="mission-column emphasis">
+                  <div class="mission-card">
+                    <strong>24</strong>
+                    <span>active exercises tracked</span>
+                  </div>
+                  <div class="mission-stat">
+                    <span class="bar"></span>
+                    <span class="bar mid"></span>
+                    <span class="bar short"></span>
+                  </div>
+                </div>
+                <div class="mission-column">
+                  <div class="mission-chip">Organize</div>
+                  <div class="mission-line"></div>
+                  <div class="mission-line short"></div>
+                  <div class="mission-line mid"></div>
+                </div>
+              </div>
+              <div class="mission-footer">
+                <div class="mission-pill">Difficulty labels</div>
+                <div class="mission-pill">Starter links</div>
+                <div class="mission-pill">Tags ready</div>
+              </div>
+            </div>
+          </div>
+          <h3>Keep your exercise library organized</h3>
+          <p class="muted">Consistent titles, prompts, difficulty levels, and tags help students understand expectations before they submit code.</p>
+        </div>
+      </section>
+
+      <section class="panel-grid" data-role-only="pro">
+        <article class="card form-card" id="exerciseForm">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Create</p>
+              <h2>New exercise</h2>
+              <p class="muted">Add a new exercise with a clear prompt, technical context, and optional starter reference.</p>
+            </div>
+          </div>
+          <form id="newExerciseForm" class="stacked-form">
+            <label class="input">
+              <span>Title</span>
+              <input name="title" type="text" placeholder="Build a REST API for tasks" required>
+            </label>
+            <div class="two-col">
+              <label class="input">
+                <span>Language</span>
+                <select name="language" required>
+                  <option value="JavaScript">JavaScript</option>
+                  <option value="Python">Python</option>
+                  <option value="Java">Java</option>
+                  <option value="C++">C++</option>
+                  <option value="Go">Go</option>
+                  <option value="Any">Any</option>
+                </select>
+              </label>
+              <label class="input">
+                <span>Difficulty</span>
+                <select name="difficulty" required>
+                  <option>Easy</option>
+                  <option>Intermediate</option>
+                  <option>Advanced</option>
+                </select>
+              </label>
+            </div>
+            <label class="input">
+              <span>Prompt</span>
+              <textarea name="prompt" rows="5" placeholder="Describe the challenge, constraints, and review criteria." required></textarea>
+            </label>
+            <div class="two-col">
+              <label class="input">
+                <span>Starter repo / link</span>
+                <input name="link" type="url" placeholder="https://github.com/org/project-starter">
+              </label>
+              <label class="input">
+                <span>Tags</span>
+                <input name="tags" type="text" placeholder="api, crud, tests">
+              </label>
+            </div>
+            <button type="submit" class="solid full">Publish exercise</button>
+          </form>
+        </article>
+
+        <article class="card" id="exerciseLibrary">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Library</p>
+              <h2>Exercises</h2>
+            </div>
+            <div class="chip-row">
+              <button class="pill ghost" id="sortNewest" type="button">Newest</button>
+              <button class="pill ghost" id="sortPopular" type="button">Most submissions</button>
+            </div>
+          </div>
+          <div id="exerciseList" class="list-cards"></div>
+        </article>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

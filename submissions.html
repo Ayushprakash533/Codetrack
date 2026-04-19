@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodeTrack · Submissions</title>
+  <script>
+    (() => {
+      document.documentElement.dataset.theme = "light";
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="theme.js"></script>
+  <script defer src="app.js"></script>
+  <script defer src="script.js"></script>
+</head>
+<body data-requires-auth="true">
+  <div class="announcement">New CodeTrack classroom release is live. <a href="exercises.html">Explore the workspace →</a></div>
+  <div class="page">
+    <header class="nav">
+      <div class="brand">
+        <div class="brand-mark">C</div>
+        <span>CodeTrack</span>
+      </div>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="exercises.html">Exercises</a>
+        <a href="submissions.html" class="active">Submissions</a>
+        <a href="progress.html">Progress</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="ghost theme-toggle" type="button" data-theme-toggle aria-label="Toggle color theme">🌙</button>
+        <span class="pill hidden" data-role-badge></span>
+        <a class="ghost" href="#studentForm" data-role-only="user">Student submit</a>
+        <a class="solid" href="#reviewDesk" data-role-only="pro">Review desk</a>
+        <a class="ghost hidden" href="#" data-logout>Logout</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero code-hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Submission Center</p>
+          <h1>Submit solutions and review student attempts from one workspace.</h1>
+          <p class="lead">Students use this page to send their code for review, while teachers use the same workspace to inspect attempts, filter submissions, and respond with feedback.</p>
+        </div>
+        <article class="card form-card" id="studentForm" data-hide-for-role="pro">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Students</p>
+              <h2>Submit a solution</h2>
+              <p class="muted">Send your current solution for the selected exercise. Every submission is saved as a separate attempt.</p>
+            </div>
+          </div>
+          <form id="submissionForm" class="stacked-form">
+            <label class="input">
+              <span>Exercise</span>
+              <select name="exercise" id="exerciseSelect" required></select>
+            </label>
+            <div class="two-col">
+              <label class="input">
+                <span>Your name</span>
+                <input name="studentName" type="text" placeholder="Aditi Sharma" required>
+              </label>
+              <label class="input">
+                <span>Email</span>
+                <input name="studentEmail" type="email" placeholder="you@example.com" required>
+              </label>
+            </div>
+            <label class="input">
+              <span>Solution (paste code)</span>
+              <textarea name="code" rows="10" placeholder="Paste your solution code here" required></textarea>
+            </label>
+            <div class="two-col">
+              <label class="input">
+                <span>Result</span>
+                <select name="outcome">
+                  <option value="passed">All tests passed</option>
+                  <option value="partial">Partially working</option>
+                  <option value="failing">Tests failing</option>
+                </select>
+              </label>
+              <label class="input">
+                <span>Notes for instructor</span>
+                <input name="notes" type="text" placeholder="What changed in this attempt or where you are blocked">
+              </label>
+            </div>
+            <button type="submit" class="solid full">Submit attempt</button>
+          </form>
+        </article>
+        <div class="hero-card stacked" data-role-only="pro">
+          <div class="floating-label">Teacher queue</div>
+          <h3>Submissions waiting for review</h3>
+          <p class="muted">Open recent attempts here and continue feedback without searching through the full list.</p>
+          <div id="queueList" class="queue-list"></div>
+          <div class="meta-row"><span id="queueMeta" class="muted"></span></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <article class="card hidden" id="reviewDesk" data-role-only="pro">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Teachers</p>
+              <h2>Review desk</h2>
+            </div>
+            <div class="chip-row">
+              <label class="input minimal">
+                <span>Exercise filter</span>
+                <select id="reviewExerciseFilter"></select>
+              </label>
+              <label class="input minimal">
+                <span>Status</span>
+                <select id="reviewStatusFilter">
+                  <option value="all">All</option>
+                  <option value="submitted">Needs review</option>
+                  <option value="approved">Approved</option>
+                  <option value="changes">Changes requested</option>
+                </select>
+              </label>
+            </div>
+          </div>
+          <div id="submissionList" class="list-cards"></div>
+        </article>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

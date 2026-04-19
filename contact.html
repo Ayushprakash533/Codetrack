@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodeTrack · Contact</title>
+  <script>
+    (() => {
+      document.documentElement.dataset.theme = "light";
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="theme.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div class="announcement">New CodeTrack classroom release is live. <a href="exercises.html">Explore the workspace →</a></div>
+  <div class="page">
+    <header class="nav">
+      <div class="brand">
+        <div class="brand-mark">C</div>
+        <span>CodeTrack</span>
+      </div>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="exercises.html">Exercises</a>
+        <a href="submissions.html">Submissions</a>
+        <a href="progress.html">Progress</a>
+        <a href="about.html">About</a>
+        <a href="contact.html" class="active">Contact</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="ghost theme-toggle" type="button" data-theme-toggle aria-label="Toggle color theme">🌙</button>
+        <span class="pill hidden" data-role-badge></span>
+        <a class="ghost" href="login.html?role=student" data-guest-only>Student Login</a>
+        <a class="solid" href="login.html?role=teacher" data-guest-only>Teacher Login</a>
+        <a class="ghost hidden" href="#" data-logout>Logout</a>
+      </div>
+    </header>
+
+    <main class="section">
+      <section class="hero code-hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Contact</p>
+          <h1>Talk to the CodeTrack team.</h1>
+          <p class="lead">Use this page for platform support, onboarding questions, product discussions, or implementation help for your institution or training team.</p>
+          <div class="info-list">
+            <span>Ask for product help, onboarding, or a guided walkthrough.</span>
+            <span>Contact us if your school or team wants a customized rollout.</span>
+            <span>Use the form below and we will reply through the email address you provide.</span>
+          </div>
+        </div>
+        <div class="hero-card">
+          <div class="floating-label">Support</div>
+          <div class="mission-visual contact-visual" aria-hidden="true">
+            <div class="mission-window">
+              <div class="mission-window-top">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <div class="mission-grid">
+                <div class="mission-column">
+                  <div class="mission-chip">Onboarding</div>
+                  <div class="mission-line short"></div>
+                  <div class="mission-line"></div>
+                  <div class="mission-line mid"></div>
+                </div>
+                <div class="mission-column emphasis">
+                  <div class="mission-card">
+                    <strong>24h</strong>
+                    <span>typical response window</span>
+                  </div>
+                  <div class="mission-stat">
+                    <span class="bar"></span>
+                    <span class="bar mid"></span>
+                    <span class="bar short"></span>
+                  </div>
+                </div>
+                <div class="mission-column">
+                  <div class="mission-chip">Support</div>
+                  <div class="mission-line"></div>
+                  <div class="mission-line short"></div>
+                  <div class="mission-line mid"></div>
+                </div>
+              </div>
+              <div class="mission-footer">
+                <div class="mission-pill">Setup help</div>
+                <div class="mission-pill">Training teams</div>
+                <div class="mission-pill">Product questions</div>
+              </div>
+            </div>
+          </div>
+          <h3>Support for teachers, programs, and training teams</h3>
+          <p class="muted">We respond to product and setup questions, and we can help you understand how CodeTrack fits your workflow.</p>
+        </div>
+      </section>
+
+      <div class="contact-grid">
+        <form class="contact-card" id="contactForm">
+          <h3>Send us a message</h3>
+          <label>
+            <span>Name</span>
+            <input name="name" type="text" placeholder="Your name" required>
+          </label>
+          <label>
+            <span>Email</span>
+            <input name="email" type="email" placeholder="you@example.com" required>
+          </label>
+          <label>
+            <span>Reason</span>
+            <select name="reason">
+              <option>Product demo</option>
+              <option>Support</option>
+              <option>Institution setup</option>
+              <option>Partnership</option>
+            </select>
+          </label>
+          <label>
+            <span>Message</span>
+            <textarea name="message" rows="5" placeholder="Tell us what you need help with" required></textarea>
+          </label>
+          <button type="submit" class="solid full">Send message</button>
+          <p class="muted" style="margin: 0;">Your message is saved securely and sent directly to the CodeTrack team.</p>
+        </form>
+
+        <div class="contact-ways">
+          <div class="tile">
+            <h4>Email</h4>
+            <p class="muted">For support and product questions</p>
+            <p><strong>support@codetrack.dev</strong></p>
+          </div>
+          <div class="tile">
+            <h4>Sales</h4>
+            <p class="muted">For schools, bootcamps, and training teams</p>
+            <p><strong>teams@codetrack.dev</strong></p>
+          </div>
+          <div class="tile">
+            <h4>Office hours</h4>
+            <p class="muted">Monday to Friday</p>
+            <p><strong>9:00 AM to 6:00 PM</strong></p>
+          </div>
+          <div class="tile">
+            <h4>Explore product pages</h4>
+            <p class="muted">Go back to the main platform pages to explore how CodeTrack works.</p>
+            <a class="ghost" href="about.html" style="display:inline-block; margin-top:6px;">About us</a>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

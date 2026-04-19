@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodeTrack · Progress</title>
+  <script>
+    (() => {
+      document.documentElement.dataset.theme = "light";
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="theme.js"></script>
+  <script defer src="app.js"></script>
+  <script defer src="script.js"></script>
+</head>
+<body data-requires-auth="true">
+  <div class="announcement">New CodeTrack classroom release is live. <a href="exercises.html">Explore the workspace →</a></div>
+  <div class="page">
+    <header class="nav">
+      <div class="brand">
+        <div class="brand-mark">C</div>
+        <span>CodeTrack</span>
+      </div>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="exercises.html">Exercises</a>
+        <a href="submissions.html">Submissions</a>
+        <a href="progress.html" class="active">Progress</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="ghost theme-toggle" type="button" data-theme-toggle aria-label="Toggle color theme">🌙</button>
+        <span class="pill hidden" data-role-badge></span>
+        <a class="ghost" href="submissions.html">View submissions</a>
+        <a class="solid" href="#progressTracker">Improvement tracker</a>
+        <a class="ghost hidden" href="#" data-logout>Logout</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero code-hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Progress Tracking</p>
+          <h1>Follow how performance changes from one attempt to the next.</h1>
+          <p class="lead">Use the tracker to review student growth, compare attempts, and keep feedback connected to real progress instead of isolated scores.</p>
+        </div>
+        <div class="hero-card">
+          <div class="floating-label">Progress view</div>
+          <div class="mission-visual progress-visual" aria-hidden="true">
+            <div class="mission-window">
+              <div class="mission-window-top">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <div class="mission-grid">
+                <div class="mission-column">
+                  <div class="mission-chip">Attempt 1</div>
+                  <div class="mission-line short"></div>
+                  <div class="mission-line"></div>
+                  <div class="mission-line mid"></div>
+                </div>
+                <div class="mission-column emphasis">
+                  <div class="mission-card">
+                    <strong>+19</strong>
+                    <span>score improvement</span>
+                  </div>
+                  <div class="mission-stat">
+                    <span class="bar"></span>
+                    <span class="bar mid"></span>
+                    <span class="bar short"></span>
+                  </div>
+                </div>
+                <div class="mission-column">
+                  <div class="mission-chip">Approved</div>
+                  <div class="mission-line"></div>
+                  <div class="mission-line short"></div>
+                  <div class="mission-line mid"></div>
+                </div>
+              </div>
+              <div class="mission-footer">
+                <div class="mission-pill">Feedback linked</div>
+                <div class="mission-pill">Attempts ordered</div>
+                <div class="mission-pill">Progress visible</div>
+              </div>
+            </div>
+          </div>
+          <h3>Track progress with context</h3>
+          <p class="muted">Attempt history, review status, and teacher comments stay together so improvement can be measured clearly.</p>
+        </div>
+      </section>
+
+      <section class="panel-grid" id="progressTracker">
+        <article class="card">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Progress</p>
+              <h2>Improvement tracker</h2>
+            </div>
+            <div class="chip-row">
+              <label class="input minimal">
+                <span>Student</span>
+                <select id="progressStudent"></select>
+              </label>
+              <label class="input minimal">
+                <span>Exercise</span>
+                <select id="progressExercise"></select>
+              </label>
+            </div>
+          </div>
+          <div id="progressSummary" class="muted"></div>
+          <div id="progressHighlights" class="stat-grid compact-stats"></div>
+          <div id="timeline" class="timeline"></div>
+          <div class="discussion-box">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Discussion</p>
+                <h3>Teacher comments and student replies</h3>
+              </div>
+            </div>
+            <div id="progressCommentList" class="discussion-list"></div>
+            <form id="progressCommentForm" class="stacked-form">
+              <label class="input">
+                <span>Your comment</span>
+                <textarea id="progressCommentInput" rows="3" placeholder="Share feedback, ask a question, or reply to the latest comment"></textarea>
+              </label>
+              <button type="submit" class="solid">Post comment</button>
+            </form>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">How to read it</p>
+              <h2>What this page shows</h2>
+            </div>
+          </div>
+          <ul class="list bullets">
+            <li>Attempts appear in sequence so you can follow the student’s learning path clearly.</li>
+            <li>Score changes help show whether the latest submission improved the previous result.</li>
+            <li>Review status shows whether the work is approved, pending, or needs revision.</li>
+            <li>Teacher comments and student replies stay attached to the related progress view.</li>
+          </ul>
+        </article>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodeTrack · Login</title>
+  <script>
+    (() => {
+      document.documentElement.dataset.theme = "light";
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="theme.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div class="announcement">New CodeTrack classroom release is live. <a href="exercises.html">Explore the workspace →</a></div>
+  <div class="page">
+    <header class="nav">
+      <div class="brand">
+        <div class="brand-mark">C</div>
+        <span>CodeTrack</span>
+      </div>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="exercises.html">Exercises</a>
+        <a href="submissions.html">Submissions</a>
+        <a href="progress.html">Progress</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="login.html" class="active">Login</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="ghost theme-toggle" type="button" data-theme-toggle aria-label="Toggle color theme">🌙</button>
+        <a class="ghost" href="index.html">Back to site</a>
+        <a class="solid" href="signup.html">Create account</a>
+      </div>
+    </header>
+
+    <main class="auth">
+      <section class="hero auth-hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Welcome back</p>
+          <h1>Sign in to continue your CodeTrack workspace.</h1>
+          <p class="lead">Students can access submissions and progress records, while teachers can manage exercises, review code, and monitor student development.</p>
+          <div class="auth-copy-list">
+            <span>Students can submit code and follow progress across attempts.</span>
+            <span>Teachers can review submissions and manage exercise workflows.</span>
+            <span>Both roles work inside the same coding practice platform.</span>
+          </div>
+        </div>
+
+        <div class="auth-card">
+          <div class="segmented" role="tablist">
+            <button class="segmented-btn active" data-role="user" aria-selected="true">Student</button>
+            <button class="segmented-btn" data-role="pro" aria-selected="false">Teacher</button>
+          </div>
+
+          <form class="auth-form" id="authForm">
+            <label>
+              <span>Email</span>
+              <input type="email" placeholder="you@example.com" required>
+            </label>
+            <label>
+              <span>Password</span>
+              <input type="password" placeholder="••••••••" required>
+            </label>
+            <div class="checkbox">
+              <input type="checkbox" id="remember">
+              <label for="remember">Remember me</label>
+            </div>
+            <button type="submit" class="solid full">Sign in</button>
+            <p class="auth-switch">New here? <a href="signup.html">Create an account</a></p>
+          </form>
+
+          <div class="auth-footnote">
+            <p class="muted">Choose the correct role before signing in so you land on the right workspace after login.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+</body>
+</html>

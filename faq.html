@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodeTrack · FAQ</title>
+  <script>
+    (() => {
+      document.documentElement.dataset.theme = "light";
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="theme.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div class="announcement">New CodeTrack classroom release is live. <a href="exercises.html">Explore the workspace →</a></div>
+  <div class="page">
+    <header class="nav">
+      <div class="brand">
+        <div class="brand-mark">C</div>
+        <span>CodeTrack</span>
+      </div>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="exercises.html">Exercises</a>
+        <a href="submissions.html">Submissions</a>
+        <a href="progress.html">Progress</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="faq.html" class="active">FAQ</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="ghost theme-toggle" type="button" data-theme-toggle aria-label="Toggle color theme">🌙</button>
+        <span class="pill hidden" data-role-badge></span>
+        <a class="ghost" href="login.html?role=student" data-guest-only>Student Login</a>
+        <a class="solid" href="login.html?role=teacher" data-guest-only>Teacher Login</a>
+        <a class="ghost hidden" href="#" data-logout>Logout</a>
+      </div>
+    </header>
+
+    <main class="section">
+      <div class="section-head">
+        <h1 class="section-title">Frequently asked questions</h1>
+        <span class="pill">CodeTrack basics</span>
+      </div>
+
+      <div class="tile">
+        <details open>
+          <summary>What is CodeTrack used for?</summary>
+          <p class="muted">CodeTrack helps teachers create coding exercises, collect multiple student submissions, review each attempt, and track progress over time.</p>
+        </details>
+        <details>
+          <summary>Can students submit more than once for the same exercise?</summary>
+          <p class="muted">Yes. Every attempt is stored separately so teachers can review the full history and students can see how their work improves.</p>
+        </details>
+        <details>
+          <summary>How does teacher feedback work?</summary>
+          <p class="muted">Teachers can change submission status, add review comments, and keep that feedback attached to the exact attempt it belongs to.</p>
+        </details>
+        <details>
+          <summary>Can students see their improvement?</summary>
+          <p class="muted">Yes. The progress area shows attempt history, scores, and the latest review notes so students can understand how their performance changes over time.</p>
+        </details>
+        <details>
+          <summary>Does the platform store data after refresh?</summary>
+          <p class="muted">Yes. The current version uses a Node.js and Express backend with persistent JSON storage so exercises and submissions remain available after reloads.</p>
+        </details>
+        <details>
+          <summary>Who is this platform for?</summary>
+          <p class="muted">It works well for coding bootcamps, colleges, internal training teams, and any instructor-led programming environment.</p>
+        </details>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

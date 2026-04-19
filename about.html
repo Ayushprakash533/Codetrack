@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodeTrack · About Us</title>
+  <script>
+    (() => {
+      document.documentElement.dataset.theme = "light";
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="theme.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div class="announcement">New CodeTrack classroom release is live. <a href="exercises.html">Explore the workspace →</a></div>
+  <div class="page">
+    <header class="nav">
+      <div class="brand">
+        <div class="brand-mark">C</div>
+        <span>CodeTrack</span>
+      </div>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="exercises.html">Exercises</a>
+        <a href="submissions.html">Submissions</a>
+        <a href="progress.html">Progress</a>
+        <a href="about.html" class="active">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="ghost theme-toggle" type="button" data-theme-toggle aria-label="Toggle color theme">🌙</button>
+        <span class="pill hidden" data-role-badge></span>
+        <a class="ghost" href="login.html?role=student" data-guest-only>Student Login</a>
+        <a class="solid" href="login.html?role=teacher" data-guest-only>Teacher Login</a>
+        <a class="ghost hidden" href="#" data-logout>Logout</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero code-hero">
+        <div class="hero-copy">
+          <p class="eyebrow">About CodeTrack</p>
+          <h1>CodeTrack helps teachers run coding practice with structure and clarity.</h1>
+          <p class="lead">The platform is designed for instructor-led coding programs that need clear exercises, repeatable review workflows, and visible student improvement over time.</p>
+          <div class="hero-badges">
+            <span class="hero-badge">Built for coding instruction</span>
+            <span class="hero-badge">Designed for repeated attempts</span>
+            <span class="hero-badge">Focused on measurable progress</span>
+          </div>
+        </div>
+
+        <div class="hero-card">
+          <div class="floating-label">Mission</div>
+          <div class="mission-visual" aria-hidden="true">
+            <div class="mission-window">
+              <div class="mission-window-top">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <div class="mission-grid">
+                <div class="mission-column">
+                  <div class="mission-chip">Assign</div>
+                  <div class="mission-line short"></div>
+                  <div class="mission-line"></div>
+                  <div class="mission-line mid"></div>
+                </div>
+                <div class="mission-column emphasis">
+                  <div class="mission-card">
+                    <strong>84%</strong>
+                    <span>retry with feedback</span>
+                  </div>
+                  <div class="mission-stat">
+                    <span class="bar"></span>
+                    <span class="bar mid"></span>
+                    <span class="bar short"></span>
+                  </div>
+                </div>
+                <div class="mission-column">
+                  <div class="mission-chip">Review</div>
+                  <div class="mission-line"></div>
+                  <div class="mission-line short"></div>
+                  <div class="mission-line mid"></div>
+                </div>
+              </div>
+              <div class="mission-footer">
+                <div class="mission-pill">Attempts saved</div>
+                <div class="mission-pill">Comments linked</div>
+                <div class="mission-pill">Progress visible</div>
+              </div>
+            </div>
+          </div>
+          <h3>Turn submission data into real learning progress</h3>
+          <p class="muted">CodeTrack is built around a simple cycle: assign work, collect attempts, review carefully, and help students improve with clearer feedback.</p>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <h2 class="section-title">What We Focus On</h2>
+        </div>
+        <div class="section-note">CodeTrack focuses on the full teaching loop: assign, submit, review, revise, and track progress with less friction.</div>
+        <div class="tile-grid">
+          <div class="tile">
+            <h4>Clear exercise publishing</h4>
+            <p>Teachers can create structured coding tasks with language, difficulty, prompts, and starter links in one place.</p>
+          </div>
+          <div class="tile">
+            <h4>Multiple submissions per task</h4>
+            <p>Students are not limited to one attempt. Every submission is stored so improvement is visible instead of hidden.</p>
+          </div>
+          <div class="tile">
+            <h4>Actionable review flow</h4>
+            <p>Feedback is tied directly to each attempt so students can understand what changed and what still needs work.</p>
+          </div>
+          <div class="tile">
+            <h4>Progress students can see</h4>
+            <p>Attempt history, scores, and review comments create a timeline that makes growth measurable.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <h2 class="section-title">Who It’s For</h2>
+        </div>
+        <div class="info-list">
+          <span>Bootcamps that need consistent exercise and review workflows</span>
+          <span>Academic teams that want structured programming assessment</span>
+          <span>Internal training programs measuring technical growth over time</span>
+        </div>
+        <div class="stat-grid">
+          <div class="stat">
+            <strong>Bootcamps</strong>
+            <span>Run exercise cycles, instructor reviews, and resubmissions in one dashboard.</span>
+          </div>
+          <div class="stat">
+            <strong>Colleges</strong>
+            <span>Support lab assignments and coding practice with clearer feedback across attempts.</span>
+          </div>
+          <div class="stat">
+            <strong>Training teams</strong>
+            <span>Use it for internal upskilling, hiring pipelines, or technical onboarding programs.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="platform-strip">
+        <div class="strip-card">
+          <strong>CodeTrack is designed to support better teaching decisions, not just collect code submissions.</strong>
+          <span><a href="contact.html">Contact us</a> if you want to use it for your classroom, bootcamp, or internal training team.</span>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

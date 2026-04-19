@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodeTrack · Create Account</title>
+  <script>
+    (() => {
+      document.documentElement.dataset.theme = "light";
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="theme.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div class="announcement">New CodeTrack classroom release is live. <a href="exercises.html">Explore the workspace →</a></div>
+  <div class="page">
+    <header class="nav">
+      <div class="brand">
+        <div class="brand-mark">C</div>
+        <span>CodeTrack</span>
+      </div>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="exercises.html">Exercises</a>
+        <a href="submissions.html">Submissions</a>
+        <a href="progress.html">Progress</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="login.html">Login</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="ghost theme-toggle" type="button" data-theme-toggle aria-label="Toggle color theme">🌙</button>
+        <a class="ghost" href="login.html">Sign in</a>
+        <a class="solid" href="index.html">Back to dashboard</a>
+      </div>
+    </header>
+
+    <main class="auth">
+      <section class="hero auth-hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Create account</p>
+          <h1>Create your CodeTrack account.</h1>
+          <p class="lead">Students can create an account to submit work and monitor progress. Teachers can create an account to publish exercises and review student solutions.</p>
+          <div class="auth-copy-list">
+            <span>Student accounts are built for submissions and progress tracking.</span>
+            <span>Teacher accounts unlock publishing, reviews, and instructional feedback.</span>
+            <span>Signup includes password confirmation and text-based verification.</span>
+          </div>
+        </div>
+
+        <div class="auth-card">
+          <div class="segmented" role="tablist">
+            <button class="segmented-btn active" data-role="user" aria-selected="true">Student</button>
+            <button class="segmented-btn" data-role="pro" aria-selected="false">Teacher</button>
+          </div>
+
+          <form class="auth-form" id="signupForm" enctype="multipart/form-data">
+            <label>
+              <span>Email</span>
+              <input type="email" placeholder="you@example.com" required>
+            </label>
+            <label>
+              <span>Password</span>
+              <input id="signupPassword" type="password" placeholder="Create a password" required>
+            </label>
+            <label>
+              <span>Confirm password</span>
+              <input id="signupConfirmPassword" type="password" placeholder="Re-enter your password" required>
+            </label>
+            <p class="form-helper hidden" id="passwordMatchMessage"></p>
+            <div class="captcha-box">
+              <div class="captcha-head">
+                <span>Captcha verification</span>
+                <button class="ghost small-btn" id="refreshCaptcha" type="button">Refresh</button>
+              </div>
+              <div class="captcha-challenge" id="captchaChallenge">Loading challenge...</div>
+              <label>
+                <span>Type the same text</span>
+                <input id="captchaAnswer" type="text" placeholder="Type the captcha text exactly" required>
+              </label>
+              <p class="form-helper hidden" id="captchaMessage"></p>
+            </div>
+            <div class="checkbox">
+              <input type="checkbox" id="tos" required>
+              <label for="tos">I agree to the Terms & Privacy</label>
+            </div>
+            <button type="submit" class="solid full">Create my account</button>
+            <p class="auth-switch">Already have an account? <a href="login.html">Log in</a></p>
+          </form>
+
+          <div class="auth-footnote">
+            <p class="muted">After signup, teachers and students are redirected to the parts of the platform that match their role.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

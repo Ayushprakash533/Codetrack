@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodeTrack · Coding Exercises and Progress Tracking</title>
+  <script>
+    (() => {
+      document.documentElement.dataset.theme = "light";
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="theme.js"></script>
+  <script defer src="app.js"></script>
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <div class="announcement">New CodeTrack classroom release is live. <a href="exercises.html">Explore the workspace →</a></div>
+  <div class="page">
+    <header class="nav">
+      <div class="brand">
+        <div class="brand-mark">C</div>
+        <span>CodeTrack</span>
+      </div>
+      <nav class="nav-links">
+        <a href="exercises.html">Exercises</a>
+        <a href="submissions.html">Submissions</a>
+        <a href="progress.html">Progress</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="ghost theme-toggle" type="button" data-theme-toggle aria-label="Toggle color theme">🌙</button>
+        <span class="pill hidden" data-role-badge></span>
+        <details class="auth-menu">
+          <summary class="ghost">Login</summary>
+          <div class="auth-dropdown">
+            <div class="auth-group-title">Student</div>
+            <a class="auth-link" href="login.html?role=student">Student sign in</a>
+            <a class="auth-link" href="signup.html?role=student">Student sign up</a>
+            <div class="auth-group-title">Teacher</div>
+            <a class="auth-link" href="login.html?role=teacher">Teacher sign in</a>
+            <a class="auth-link" href="signup.html?role=teacher">Teacher sign up</a>
+          </div>
+        </details>
+        <a class="ghost" href="submissions.html" data-role-only="user">Student</a>
+        <a class="solid" href="exercises.html" data-role-only="pro">Instructor</a>
+        <a class="ghost hidden" href="#" data-logout>Logout</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero code-hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Code Learning Platform</p>
+          <h1>Manage coding exercises, submissions, reviews, and student growth in one place.</h1>
+          <p class="lead">CodeTrack gives instructors a clear way to publish programming tasks, evaluate every submission, and help students improve across multiple attempts without losing context.</p>
+          <div class="hero-badges">
+            <span class="hero-badge">Exercise publishing</span>
+            <span class="hero-badge">Multiple student attempts</span>
+            <span class="hero-badge">Review feedback and progress</span>
+          </div>
+          <div class="hero-actions">
+            <a class="solid lg" href="exercises.html">Open exercises</a>
+            <a class="ghost lg" href="submissions.html">Open submissions</a>
+          </div>
+          <div class="quick-stats" id="heroStats">
+            <div>
+              <strong id="statExercises">0</strong>
+              <span>Exercises live</span>
+            </div>
+            <div>
+              <strong id="statSubmissions">0</strong>
+              <span>Total submissions</span>
+            </div>
+            <div>
+              <strong id="statAttempts">0</strong>
+              <span>Avg attempts / exercise</span>
+            </div>
+          </div>
+        </div>
+        <div class="hero-card stacked">
+          <div class="hero-showcase" aria-label="CodeTrack classroom dashboard preview">
+            <div class="showcase-topbar">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <div class="showcase-photo">
+              <div class="photo-orb orb-one"></div>
+              <div class="photo-orb orb-two"></div>
+              <div class="photo-person person-one"></div>
+              <div class="photo-person person-two"></div>
+              <div class="photo-screen">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+            <div class="showcase-caption">
+              <strong>Live review workspace</strong>
+              <span>Attempts, feedback, and progress in one flow</span>
+            </div>
+          </div>
+          <div class="role-panels">
+            <article class="role-card">
+              <p class="eyebrow">Students</p>
+              <h3>Student access</h3>
+              <p class="muted">Submit solutions, review comments, and follow your progress across every exercise attempt.</p>
+              <div class="role-actions">
+                <a class="solid" href="login.html?role=student">Student login</a>
+                <a class="ghost" href="signup.html?role=student">Create account</a>
+              </div>
+            </article>
+            <article class="role-card teacher">
+              <p class="eyebrow">Teachers</p>
+              <h3>Teacher access</h3>
+              <p class="muted">Create exercises, review submissions, and leave structured guidance for each student attempt.</p>
+              <div class="role-actions">
+                <a class="solid" href="login.html?role=teacher">Teacher login</a>
+                <a class="ghost" href="signup.html?role=teacher">Create account</a>
+              </div>
+            </article>
+          </div>
+          <div class="queue-header">
+            <h3>Pending reviews</h3>
+            <p class="muted">Open any submission here to continue reviewing student work.</p>
+          </div>
+          <div id="queueList" class="queue-list"></div>
+          <div class="meta-row"><span id="queueMeta" class="muted"></span></div>
+        </div>
+      </section>
+
+      <section class="platform-strip">
+        <div class="strip-card">
+          <strong>Built for coding classrooms, bootcamps, and instructor-led training programs</strong>
+          <span>One platform for assigning work, collecting attempts, reviewing code, and tracking improvement.</span>
+        </div>
+      </section>
+
+      <section class="brand-wall">
+        <p class="eyebrow">Trusted learning flow</p>
+        <div class="logo-cloud" aria-label="Example organizations using CodeTrack">
+          <span>CodeLab</span>
+          <span>StackSchool</span>
+          <span>AlgoCamp</span>
+          <span>DevForge</span>
+          <span>ByteClass</span>
+          <span>SyntaxHub</span>
+          <span>CloudCore</span>
+          <span>DataNest</span>
+        </div>
+      </section>
+
+      <section class="dark-story">
+        <div class="story-copy">
+          <p class="eyebrow green">The future is practice plus feedback.</p>
+          <h2>Students improve faster when every attempt, review, and comment stays connected.</h2>
+          <p>CodeTrack gives teachers the structure to publish exercises and gives students a clear path from first attempt to stronger solution.</p>
+        </div>
+        <div class="star-field" aria-hidden="true"></div>
+      </section>
+
+      <section class="feature-showcase">
+        <div class="feature-copy">
+          <span class="mono-chip">CODETRACK SCREEN</span>
+          <h2>The developer skills platform for classrooms.</h2>
+          <p>Assign work, review submissions, and show progress through a workspace that feels like a real software team environment.</p>
+          <a href="progress.html">Learn more →</a>
+        </div>
+        <div class="product-picture wide">
+          <div class="picture-toolbar">
+            <span></span><span></span><span></span>
+            <strong>review-panel.js</strong>
+          </div>
+          <div class="picture-grid">
+            <div class="picture-chat">
+              <b>Teacher feedback</b>
+              <p>Good improvement. Add edge-case tests.</p>
+              <b>Student reply</b>
+              <p>Updated attempt submitted.</p>
+            </div>
+            <pre><code>function submitAttempt(code) {
+  validate(code);
+  saveProgress();
+  notifyTeacher();
+}</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="feature-showcase reverse">
+        <div class="product-picture soft">
+          <div class="assessment-card">
+            <span class="success-dot">✓</span>
+            <strong>Assessment submitted. Redirecting...</strong>
+            <small>Attempt #3 saved to student progress</small>
+          </div>
+        </div>
+        <div class="feature-copy">
+          <span class="mono-chip">CODETRACK SKILLUP</span>
+          <h2>Find improvement inside every student attempt.</h2>
+          <p>Track scores, comments, replies, and unread teacher feedback so each student sees a personal improvement path.</p>
+          <a href="submissions.html">Open submissions →</a>
+        </div>
+      </section>
+
+      <section class="testimonial-dark">
+        <h2>Loved by coding classrooms and developers from every background.</h2>
+        <div class="quote-logo">CT</div>
+        <p>“The platform makes repeated attempts visible. Students know what changed, and teachers can review with context.”</p>
+        <span>Instructor feedback workflow</span>
+      </section>
+
+      <section class="panel-grid" id="exercises">
+        <article class="card form-card" id="exerciseForm">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Create</p>
+              <h2>New exercise</h2>
+              <p class="muted">Create a new coding exercise with the prompt, language, difficulty, and reference material students need.</p>
+            </div>
+          </div>
+          <form id="newExerciseForm" class="stacked-form">
+            <label class="input">
+              <span>Title</span>
+              <input name="title" type="text" placeholder="Build a REST API for tasks" required>
+            </label>
+            <div class="two-col">
+              <label class="input">
+                <span>Language</span>
+                <select name="language" required>
+                  <option value="JavaScript">JavaScript</option>
+                  <option value="Python">Python</option>
+                  <option value="Java">Java</option>
+                  <option value="C++">C++</option>
+                  <option value="Go">Go</option>
+                  <option value="Any">Any</option>
+                </select>
+              </label>
+              <label class="input">
+                <span>Difficulty</span>
+                <select name="difficulty" required>
+                  <option>Easy</option>
+                  <option>Intermediate</option>
+                  <option>Advanced</option>
+                </select>
+              </label>
+            </div>
+            <label class="input">
+              <span>Prompt</span>
+              <textarea name="prompt" rows="4" placeholder="Describe the challenge, acceptance criteria, and hints." required></textarea>
+            </label>
+            <div class="two-col">
+              <label class="input">
+                <span>Starter repo / link (optional)</span>
+                <input name="link" type="url" placeholder="https://github.com/org/project-starter">
+              </label>
+              <label class="input">
+                <span>Tags</span>
+                <input name="tags" type="text" placeholder="api, crud, tests">
+              </label>
+            </div>
+            <button type="submit" class="solid full">Publish exercise</button>
+          </form>
+        </article>
+
+        <article class="card" id="exerciseLibrary">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Library</p>
+              <h2>Exercises</h2>
+            </div>
+            <div class="chip-row">
+              <button class="pill ghost" id="sortNewest" type="button">Newest</button>
+              <button class="pill ghost" id="sortPopular" type="button">Most submissions</button>
+            </div>
+          </div>
+          <div id="exerciseList" class="list-cards"></div>
+        </article>
+      </section>
+
+      <section class="panel-grid" id="submissions">
+        <article class="card form-card" id="studentForm">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Students</p>
+              <h2>Submit a solution</h2>
+              <p class="muted">Students can send a fresh solution for any exercise, and every attempt is saved in order.</p>
+            </div>
+          </div>
+          <form id="submissionForm" class="stacked-form">
+            <label class="input">
+              <span>Exercise</span>
+              <select name="exercise" id="exerciseSelect" required></select>
+            </label>
+            <div class="two-col">
+              <label class="input">
+                <span>Your name</span>
+                <input name="studentName" type="text" placeholder="Aditi Sharma" required>
+              </label>
+              <label class="input">
+                <span>Email</span>
+                <input name="studentEmail" type="email" placeholder="you@example.com" required>
+              </label>
+            </div>
+            <label class="input">
+              <span>Solution (paste code)</span>
+              <textarea name="code" rows="8" placeholder="Paste your solution code here" required></textarea>
+            </label>
+            <div class="two-col">
+              <label class="input">
+                <span>Result</span>
+                <select name="outcome">
+                  <option value="passed">All tests passed</option>
+                  <option value="partial">Partially working</option>
+                  <option value="failing">Tests failing</option>
+                </select>
+              </label>
+              <label class="input">
+                <span>Notes for instructor (optional)</span>
+                <input name="notes" type="text" placeholder="Where you're stuck or what changed this attempt">
+              </label>
+            </div>
+            <button type="submit" class="solid full">Submit attempt</button>
+          </form>
+        </article>
+
+        <article class="card" id="reviewDesk">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Teachers</p>
+              <h2>Review desk</h2>
+            </div>
+            <div class="chip-row">
+              <label class="input minimal">
+                <span>Exercise filter</span>
+                <select id="reviewExerciseFilter"></select>
+              </label>
+              <label class="input minimal">
+                <span>Status</span>
+                <select id="reviewStatusFilter">
+                  <option value="all">All</option>
+                  <option value="submitted">Needs review</option>
+                  <option value="approved">Approved</option>
+                  <option value="changes">Changes requested</option>
+                </select>
+              </label>
+            </div>
+          </div>
+          <div id="submissionList" class="list-cards"></div>
+        </article>
+      </section>
+
+      <section class="panel-grid" id="progress">
+        <article class="card">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Progress</p>
+              <h2>Improvement tracker</h2>
+            </div>
+            <div class="chip-row">
+              <label class="input minimal">
+                <span>Student</span>
+                <select id="progressStudent"></select>
+              </label>
+              <label class="input minimal">
+                <span>Exercise</span>
+                <select id="progressExercise"></select>
+              </label>
+            </div>
+          </div>
+          <div id="progressSummary" class="muted"></div>
+          <div id="progressHighlights" class="stat-grid compact-stats"></div>
+          <div id="timeline" class="timeline"></div>
+          <div class="discussion-box">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Discussion</p>
+                <h3>Teacher comments and student replies</h3>
+              </div>
+            </div>
+            <div id="progressCommentList" class="discussion-list"></div>
+            <form id="progressCommentForm" class="stacked-form">
+              <label class="input">
+                <span>Your comment</span>
+                <textarea id="progressCommentInput" rows="3" placeholder="Share feedback, ask a question, or reply to the latest comment"></textarea>
+              </label>
+              <button type="submit" class="solid">Post comment</button>
+            </form>
+          </div>
+        </article>
+
+        <article class="card" id="about">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">How it works</p>
+              <h2>How CodeTrack works</h2>
+            </div>
+          </div>
+          <ul class="list bullets">
+            <li>Teachers publish coding tasks with requirements, difficulty, and optional starter resources.</li>
+            <li>Students submit one or more attempts for the same exercise as they improve their solution.</li>
+            <li>Teacher feedback stays attached to the correct submission, making reviews easy to follow.</li>
+            <li>The progress tracker shows score changes, statuses, and comments over time.</li>
+            <li>All core records are loaded from the backend so exercises, submissions, and reviews remain available later.</li>
+          </ul>
+        </article>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div>
+        <div class="brand">
+          <div class="brand-mark">C</div>
+          <span>CodeTrack</span>
+        </div>
+        <p>Built for coding practice, instructor feedback, and visible learning progress.</p>
+        <p class="designer-credit">Designed by Yogesh Kumar</p>
+      </div>
+      <div class="footer-links">
+        <a href="exercises.html">Exercises</a>
+        <a href="submissions.html">Submissions</a>
+        <a href="progress.html">Progress</a>
+      </div>
+    </footer>
+  </div>
+
+  <div class="mobile-cta">
+    <span>Ready to start?</span>
+    <a class="solid" href="submissions.html" style="text-decoration:none;">Submit solution</a>
+  </div>
+</body>
+</html>
