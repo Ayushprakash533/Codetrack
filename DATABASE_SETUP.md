@@ -43,6 +43,8 @@ MONGODB_URI
 MONGODB_DB
 ```
 
+Do not upload your local `.env` file to Vercel. Keep local secrets in `.env`, and set the same values again in the Vercel dashboard under Project Settings -> Environment Variables.
+
 Recommended Vercel settings:
 
 - Framework Preset: `Other`
@@ -50,6 +52,11 @@ Recommended Vercel settings:
 - Node.js runtime: `20.x`
 
 After deployment, Vercel will serve the static frontend pages and forward all `/api/*` requests to the backend function.
+
+## 4. Local notes
+
+- Local development reads environment values from `.env` automatically.
+- Vercel does not use your local `.env` file from the repository; it uses the variables configured in the project dashboard.
 
 ## Collections Used
 
