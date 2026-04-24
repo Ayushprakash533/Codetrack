@@ -27,9 +27,15 @@ const toast = (message, isError = false) => {
 };
 
 async function postJSON(path, payload) {
+  const email = (localStorage.getItem("codetrack_user_email") || "").trim().toLowerCase();
+  const role = currentRole();
   const res = await fetch(`${API_BASE}${path}`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      ...(email ? { "X-CodeTrack-Email": email } : {}),
+      ...(role ? { "X-CodeTrack-Role": role } : {})
+    },
     body: JSON.stringify(payload),
   });
   if (!res.ok) {

@@ -60,6 +60,8 @@ body {
   background: var(--bg);
   background-image: var(--bg-accent);
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
@@ -117,6 +119,10 @@ body::before {
   margin: 0 auto;
   padding: 0 clamp(20px, 3vw, 44px) 120px;
   position: relative;
+  flex: 1 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .page::before {
@@ -1062,7 +1068,7 @@ a.ghost {
 }
 
 .platform-strip {
-  margin: 6px 0 24px;
+  margin: 6px 0 52px;
 }
 
 .strip-card {
@@ -1071,11 +1077,18 @@ a.ghost {
   gap: 16px;
   padding: 20px 22px;
   border-radius: 22px 22px 28px 22px;
-  background:
-    linear-gradient(90deg, rgba(108, 140, 255, 0.08), transparent 35%),
-    linear-gradient(135deg, rgba(15, 23, 42, 0.06), rgba(15, 23, 42, 0.02));
-  border: 1px solid var(--border-strong);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.18), transparent), var(--card-strong);
+  border: 1px solid rgba(23, 163, 74, 0.22);
   box-shadow: var(--shadow-soft);
+  color: var(--text);
+  position: relative;
+  z-index: 1;
+}
+
+.strip-card strong,
+.strip-card span,
+.strip-card a {
+  color: var(--text);
 }
 
 .brand-wall {
@@ -1710,6 +1723,7 @@ input[type="range"] {
 main {
   display: grid;
   gap: 24px;
+  flex: 1 0 auto;
 }
 
 .section-head {
@@ -1934,8 +1948,9 @@ summary::-webkit-details-marker {
 }
 
 .footer {
-  margin: 70px calc(clamp(20px, 3vw, 44px) * -1) -120px;
+  margin: 70px calc(clamp(20px, 3vw, 44px) * -1) 0;
   padding: 44px clamp(22px, 5vw, 72px);
+  min-height: 160px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   background:
     radial-gradient(circle at 18% 20%, rgba(23, 163, 74, 0.16), transparent 28%),
@@ -2176,6 +2191,7 @@ summary::-webkit-details-marker {
 .panel-grid > .card {
   padding: 20px;
   min-height: 100%;
+  min-width: 0;
 }
 
 #progressTracker {
@@ -2184,6 +2200,38 @@ summary::-webkit-details-marker {
   margin-inline: 0;
   align-items: start;
   grid-auto-rows: 1fr;
+}
+
+#progress {
+  grid-auto-rows: 1fr;
+}
+
+#progress > .card {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  min-height: 100%;
+  height: min(68vh, 640px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(7, 11, 20, 0.18) transparent;
+}
+
+#progress > .card::-webkit-scrollbar {
+  width: 8px;
+}
+
+#progress > .card::-webkit-scrollbar-thumb {
+  background: rgba(7, 11, 20, 0.18);
+  border-radius: 999px;
+}
+
+#progress > .card > .section-head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--card-strong);
+  padding-bottom: 10px;
 }
 
 #progressTracker > .card {
@@ -2247,7 +2295,9 @@ summary::-webkit-details-marker {
 }
 
 #reviewDesk {
-  max-height: 78vh;
+  display: flex;
+  flex-direction: column;
+  height: min(80vh, 940px);
   overflow: hidden;
 }
 
@@ -2257,12 +2307,16 @@ summary::-webkit-details-marker {
   z-index: 1;
   background: var(--card-strong);
   padding-bottom: 10px;
+  flex: 0 0 auto;
 }
 
 #submissionList {
-  max-height: calc(78vh - 92px);
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
   padding-right: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(7, 11, 20, 0.18) transparent;
 }
 
 #submissionList::-webkit-scrollbar {
@@ -2597,7 +2651,36 @@ summary::-webkit-details-marker {
     overflow: visible;
   }
 
+  #progress > .card {
+    height: auto;
+    max-height: none;
+    overflow: visible;
+  }
+
+  #reviewDesk {
+    height: auto;
+    max-height: none;
+    overflow: visible;
+  }
+
+  #reviewDesk .section-head {
+    position: static;
+    padding-bottom: 0;
+  }
+
+  #submissionList {
+    min-height: auto;
+    max-height: none;
+    overflow: visible;
+    padding-right: 0;
+  }
+
   #progressTracker > .card > .section-head {
+    position: static;
+    padding-bottom: 0;
+  }
+
+  #progress > .card > .section-head {
     position: static;
     padding-bottom: 0;
   }
@@ -2869,6 +2952,10 @@ summary::-webkit-details-marker {
 
   .section-head {
     align-items: stretch;
+  }
+
+  #reviewDesk {
+    padding-bottom: 18px;
   }
 
   .chip-row {

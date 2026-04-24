@@ -125,12 +125,14 @@
               </div>
             </article>
           </div>
-          <div class="queue-header">
-            <h3>Pending reviews</h3>
-            <p class="muted">Open any submission here to continue reviewing student work.</p>
+          <div data-role-only="pro">
+            <div class="queue-header">
+              <h3>Pending reviews</h3>
+              <p class="muted">Open any submission here to continue reviewing student work.</p>
+            </div>
+            <div id="queueList" class="queue-list"></div>
+            <div class="meta-row"><span id="queueMeta" class="muted"></span></div>
           </div>
-          <div id="queueList" class="queue-list"></div>
-          <div class="meta-row"><span id="queueMeta" class="muted"></span></div>
         </div>
       </section>
 
@@ -215,7 +217,7 @@
         <span>Instructor feedback workflow</span>
       </section>
 
-      <section class="panel-grid" id="exercises">
+      <section class="panel-grid" id="exercises" data-role-only="pro">
         <article class="card form-card" id="exerciseForm">
           <div class="section-head">
             <div>
@@ -284,7 +286,7 @@
       </section>
 
       <section class="panel-grid" id="submissions">
-        <article class="card form-card" id="studentForm">
+        <article class="card form-card" id="studentForm" data-role-only="user">
           <div class="section-head">
             <div>
               <p class="eyebrow">Students</p>
@@ -329,7 +331,7 @@
           </form>
         </article>
 
-        <article class="card" id="reviewDesk">
+        <article class="card" id="reviewDesk" data-role-only="pro">
           <div class="section-head">
             <div>
               <p class="eyebrow">Teachers</p>
@@ -406,7 +408,7 @@
             <li>Students submit one or more attempts for the same exercise as they improve their solution.</li>
             <li>Teacher feedback stays attached to the correct submission, making reviews easy to follow.</li>
             <li>The progress tracker shows score changes, statuses, and comments over time.</li>
-            <li>All core records are loaded from the backend so exercises, submissions, and reviews remain available later.</li>
+            <li>All core records are loaded from an Atlas-backed API so exercises, submissions, reviews, and comments stay available in the cloud.</li>
           </ul>
         </article>
       </section>

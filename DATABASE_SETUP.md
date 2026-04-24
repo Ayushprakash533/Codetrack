@@ -1,42 +1,55 @@
-# CodeTrack Database Setup
+# CodeTrack Atlas And Vercel Setup
 
-CodeTrack now uses a Node.js + Express backend with MongoDB for storage.
+CodeTrack now uses a Node.js + Express backend backed by MongoDB Atlas. The same `/api` endpoints work for local development and for deployment on Vercel.
 
-## 1. Start MongoDB
+## 1. Configure MongoDB Atlas
 
-Run MongoDB locally, or use a MongoDB Atlas connection string.
+Create or use an Atlas cluster, then copy its connection string.
 
-Local default:
-
-```bash
-mongodb://127.0.0.1:27017
-```
-
-## 2. Configure the database connection
-
-Set these environment variables before running the server:
+Required environment variables:
 
 ```bash
-export MONGODB_URI=mongodb://127.0.0.1:27017
-export MONGODB_DB=codetrack
-export PORT=3000
+MONGODB_URI=mongodb+srv://<username>:<password>@<cluster-url>/codetrack?retryWrites=true&w=majority&appName=CodeTrack
+MONGODB_DB=codetrack
+PORT=3000
 ```
 
-You can also use [.env.example](/Users/yashgupta/Documents/New%20project/.env.example) as your reference.
+Reference file: [.env.example](/Users/yashgupta/Documents/CodeTrack/.env.example)
 
-## 3. Install dependencies
+## 2. Run locally
+
+Install dependencies:
 
 ```bash
 npm install
 ```
 
-## 4. Start the application
+Start the app:
 
 ```bash
 npm start
 ```
 
-The app will connect to MongoDB, create indexes automatically, and seed sample exercise/submission data if the database is empty.
+The server will connect to Atlas, create indexes automatically, and seed sample data when the database is empty.
+
+## 3. Deploy to Vercel
+
+This project already includes `api/index.js` and `vercel.json` for the Vercel serverless entrypoint.
+
+Add these Environment Variables in the Vercel project settings:
+
+```bash
+MONGODB_URI
+MONGODB_DB
+```
+
+Recommended Vercel settings:
+
+- Framework Preset: `Other`
+- Root Directory: project root
+- Node.js runtime: `20.x`
+
+After deployment, Vercel will serve the static frontend pages and forward all `/api/*` requests to the backend function.
 
 ## Collections Used
 
@@ -54,4 +67,4 @@ The app will connect to MongoDB, create indexes automatically, and seed sample e
 
 ## Important
 
-Passwords are stored directly in MongoDB in this version, so this is suitable for a classroom/demo project, not production authentication.
+Passwords are still stored directly in MongoDB in this version. That is acceptable for a demo or classroom project, but not for production-grade authentication.

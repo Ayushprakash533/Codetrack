@@ -2,29 +2,29 @@
   "exercises": [
     {
       "id": "mn5vze8g-28u233h8",
-      "title": "Build a RESTful Tasks API",
-      "language": "JavaScript",
-      "difficulty": "Intermediate",
-      "prompt": "Create CRUD endpoints for tasks with validation, pagination, and tests for core routes.",
-      "link": "https://github.com/example/tasks-starter",
+      "title": "Print hello world",
+      "language": "C",
+      "difficulty": "Easy",
+      "prompt": "Write a basic C program that prints Hello, World! to the screen.",
+      "link": "",
       "tags": [
-        "api",
-        "crud",
-        "testing"
+        "output",
+        "syntax",
+        "basics"
       ],
       "createdAt": 1774174454224
     },
     {
       "id": "mn5vze8g-mopb5xh6",
-      "title": "CSV Metrics Pipeline",
-      "language": "Python",
-      "difficulty": "Advanced",
-      "prompt": "Clean incoming CSV records, produce aggregates, and cover edge cases with unit tests.",
+      "title": "Find the largest of two numbers",
+      "language": "Java",
+      "difficulty": "Easy",
+      "prompt": "Write a Java program that compares two numbers and prints the larger one.",
       "link": "",
       "tags": [
-        "etl",
-        "csv",
-        "unit-tests"
+        "comparison",
+        "numbers",
+        "basics"
       ],
       "createdAt": 1774260854224
     }
@@ -35,8 +35,8 @@
       "exerciseId": "mn5vze8g-28u233h8",
       "studentName": "Maya Sharma",
       "studentEmail": "maya@example.com",
-      "code": "app.post('/tasks', validateTask, async (req, res) => {\n  const task = await service.create(req.body);\n  res.status(201).json(task);\n});",
-      "notes": "Added validation middleware and one route test.",
+      "code": "#include <stdio.h>\n\nint main() {\n    printf(\"Hello, World!\\n\");\n    return 0;\n}",
+      "notes": "Basic C program to print the message.",
       "outcome": "partial",
       "status": "submitted",
       "attempt": 1,
@@ -50,18 +50,18 @@
       "exerciseId": "mn5vze8g-28u233h8",
       "studentName": "Maya Sharma",
       "studentEmail": "maya@example.com",
-      "code": "app.post('/tasks', validateTask, async (req, res) => {\n  const task = await service.create(req.body);\n  res.status(201).json(task);\n});\n\napp.get('/tasks', async (req, res) => {\n  const page = Number(req.query.page || 1);\n  res.json(await service.list({ page }));\n});",
-      "notes": "Added pagination and better error handling.",
+      "code": "#include <stdio.h>\n\nint main() {\n    printf(\"Hello, World!\\n\");\n    return 0;\n}",
+      "notes": "Clean version with correct output and return statement.",
       "outcome": "passed",
       "status": "approved",
       "attempt": 2,
       "score": 91,
-      "latestComment": "Strong improvement. Add one explicit pagination edge-case test next.",
+      "latestComment": "Good work. The program is simple and prints the expected output.",
       "reviews": [
         {
           "id": "mn5vze8g-p9wsrz7f",
           "status": "approved",
-          "comment": "Strong improvement. Add one explicit pagination edge-case test next.",
+          "comment": "Good work. The program is simple and prints the expected output.",
           "createdAt": 1774412054224
         }
       ],
@@ -72,8 +72,8 @@
       "exerciseId": "mn5vze8g-mopb5xh6",
       "studentName": "Adil Khan",
       "studentEmail": "adil@example.com",
-      "code": "def clean_rows(df):\n    return df.dropna()",
-      "notes": "Baseline cleaning only so far.",
+      "code": "public class Main {\n    public static void main(String[] args) {\n        int a = 10;\n        int b = 20;\n\n        if (a > b) {\n            System.out.println(a);\n        } else {\n            System.out.println(b);\n        }\n    }\n}",
+      "notes": "Used an if-else statement to print the larger number.",
       "outcome": "failing",
       "status": "submitted",
       "attempt": 1,

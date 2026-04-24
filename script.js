@@ -1,6 +1,7 @@
 (function () {
   const API_BASE = "/api";
   const $ = (id) => document.getElementById(id);
+  const normalizeRole = (role = "") => role === "teacher" ? "pro" : role === "student" ? "user" : role;
   const fmtDate = (ts) =>
     new Date(ts).toLocaleString(undefined, {
       month: "short",
@@ -10,13 +11,14 @@
     });
   const escapeHTML = (str = "") =>
     str.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const sameId = (a, b) => String(a) === String(b);
 
   let state = { exercises: [], submissions: [], progressComments: [], progressCommentReads: [] };
   let sortMode = "newest";
   let pendingReadMark = false;
 
   function currentRole() {
-    return localStorage.getItem("codetrack_user_role") || "";
+    return normalizeRole(localStorage.getItem("codetrack_user_role") || "");
   }
 
   function currentEmail() {
@@ -41,9 +43,13 @@
   }
 
   async function api(path, options = {}) {
+    const email = currentEmail();
+    const role = currentRole();
     const response = await fetch(`${API_BASE}${path}`, {
       headers: {
         "Content-Type": "application/json",
+        ...(email ? { "X-CodeTrack-Email": email } : {}),
+        ...(role ? { "X-CodeTrack-Role": role } : {}),
         ...(options.headers || {})
       },
       ...options
@@ -101,7 +107,7 @@
     const exCount = state.exercises.length;
     const subCount = state.submissions.length;
     const attemptsByExercise = state.exercises.map((exercise) =>
-      state.submissions.filter((submission) => submission.exerciseId === exercise.id).length
+      state.submissions.filter((submission) => sameId(submission.exerciseId, exercise.id)).length
     );
     const avgAttempts = attemptsByExercise.length
       ? (attemptsByExercise.reduce((sum, count) => sum + count, 0) / attemptsByExercise.length).toFixed(1)
@@ -198,7 +204,7 @@
 
     queueList.innerHTML = pending
       .map((submission) => {
-        const exercise = state.exercises.find((item) => item.id === submission.exerciseId);
+        const exercise = state.exercises.find((item) => sameId(item.id, submission.exerciseId));
         return `<button class="queue-card" data-jump="${submission.id}" type="button">
           <div class="queue-title">${escapeHTML(exercise ? exercise.title : "Exercise")}</div>
           <div class="queue-meta">${escapeHTML(submission.studentName)} • Attempt ${submission.attempt}</div>
@@ -215,8 +221,8 @@
     if (!list) return;
     const sorted = [...state.exercises].sort((a, b) => {
       if (sortMode === "popular") {
-        const countA = state.submissions.filter((submission) => submission.exerciseId === a.id).length;
-        const countB = state.submissions.filter((submission) => submission.exerciseId === b.id).length;
+        const countA = state.submissions.filter((submission) => sameId(submission.exerciseId, a.id)).length;
+        const countB = state.submissions.filter((submission) => sameId(submission.exerciseId, b.id)).length;
         return countB - countA || b.createdAt - a.createdAt;
       }
       return b.createdAt - a.createdAt;
@@ -225,7 +231,7 @@
     list.innerHTML =
       sorted
         .map((exercise) => {
-          const submissions = state.submissions.filter((submission) => submission.exerciseId === exercise.id);
+          const submissions = state.submissions.filter((submission) => sameId(submission.exerciseId, exercise.id));
           const pending = submissions.filter((submission) => submission.status === "submitted").length;
           const approved = submissions.filter((submission) => submission.status === "approved").length;
           const tags = (exercise.tags || []).map((tag) => `<span class="tag">${escapeHTML(tag)}</span>`).join("");
@@ -262,7 +268,7 @@
     const previous = state.submissions
       .filter(
         (item) =>
-          item.exerciseId === submission.exerciseId &&
+          sameId(item.exerciseId, submission.exerciseId) &&
           item.studentEmail === submission.studentEmail &&
           item.createdAt < submission.createdAt
       )
@@ -309,7 +315,7 @@
 
     let submissions = [...state.submissions];
     if (exerciseFilter && exerciseFilter !== "all") {
-      submissions = submissions.filter((submission) => submission.exerciseId === exerciseFilter);
+      submissions = submissions.filter((submission) => sameId(submission.exerciseId, exerciseFilter));
     }
     if (statusFilter !== "all") {
       submissions = submissions.filter((submission) => submission.status === statusFilter);
@@ -324,7 +330,7 @@
 
     container.innerHTML = submissions
       .map((submission) => {
-        const exercise = state.exercises.find((item) => item.id === submission.exerciseId);
+        const exercise = state.exercises.find((item) => sameId(item.id, submission.exerciseId));
         const delta = calcDelta(submission);
 
         return `<article class="card compact submission" id="card-${submission.id}">
@@ -388,7 +394,7 @@
 
     let submissions = state.submissions.filter((submission) => submission.studentEmail === student);
     if (exerciseFilter && exerciseFilter !== "all") {
-      submissions = submissions.filter((submission) => submission.exerciseId === exerciseFilter);
+      submissions = submissions.filter((submission) => sameId(submission.exerciseId, exerciseFilter));
     }
     submissions.sort((a, b) => a.createdAt - b.createdAt);
 
@@ -441,7 +447,7 @@
       `<div class="sparkline">${sparkline}</div>` +
       submissions
         .map((submission) => {
-          const exercise = state.exercises.find((item) => item.id === submission.exerciseId);
+          const exercise = state.exercises.find((item) => sameId(item.id, submission.exerciseId));
           const deltaLabel = calcDelta(submission);
           const latestReview = Array.isArray(submission.reviews) && submission.reviews.length
             ? [...submission.reviews].sort((a, b) => b.createdAt - a.createdAt)[0]
@@ -547,6 +553,10 @@
 
   async function handleExerciseForm(event) {
     event.preventDefault();
+    if (currentRole() !== "pro") {
+      toast("Only teacher accounts can publish exercises.", true);
+      return;
+    }
     const form = event.target;
     const formData = new FormData(form);
 
@@ -578,6 +588,10 @@
 
   async function handleSubmissionForm(event) {
     event.preventDefault();
+    if (currentRole() !== "user") {
+      toast("Only student accounts can submit solutions.", true);
+      return;
+    }
 
     if (!state.exercises.length) {
       toast("Publish an exercise before accepting submissions.", true);
@@ -589,7 +603,7 @@
     const payload = {
       exerciseId: String(formData.get("exercise") || "").trim(),
       studentName: String(formData.get("studentName") || "").trim(),
-      studentEmail: String(formData.get("studentEmail") || "").trim().toLowerCase(),
+      studentEmail: currentEmail() || String(formData.get("studentEmail") || "").trim().toLowerCase(),
       code: String(formData.get("code") || "").trim(),
       notes: String(formData.get("notes") || "").trim(),
       outcome: String(formData.get("outcome") || "").trim()
@@ -613,6 +627,10 @@
   async function handleReviewActions(event) {
     const action = event.target.dataset.action;
     if (action !== "save") return;
+    if (currentRole() !== "pro") {
+      toast("Only teacher accounts can review submissions.", true);
+      return;
+    }
 
     const id = event.target.dataset.id;
     const card = document.querySelector(`#card-${id}`);
@@ -638,6 +656,10 @@
 
   async function handleProgressCommentSubmit(event) {
     event.preventDefault();
+    if (!currentRole()) {
+      toast("Sign in to post comments.", true);
+      return;
+    }
     const form = event.target;
     const input = $("progressCommentInput");
     if (!form || !input) return;
@@ -645,7 +667,7 @@
     const comment = input.value.trim();
     const studentEmail = form.dataset.studentEmail || "";
     const exerciseId = form.dataset.exerciseId || "all";
-    const authorRole = form.dataset.authorRole || currentRole() || "user";
+    const authorRole = currentRole() || form.dataset.authorRole || "user";
     const authorName =
       currentUserName() ||
       (authorRole === "pro" ? "Teacher" : "Student");
@@ -684,6 +706,7 @@
     if (!commentId) return;
 
     if (action === "edit") {
+      if (currentRole() !== "pro") return;
       const comment = (state.progressComments || []).find((item) => item.id === commentId);
       if (!comment) return;
       const nextText = window.prompt("Edit teacher comment", comment.comment);
@@ -707,6 +730,7 @@
     }
 
     if (action === "delete") {
+      if (currentRole() !== "pro") return;
       if (!window.confirm("Delete this teacher comment?")) return;
       try {
         await api(`/progress-comments/${commentId}?authorRole=${encodeURIComponent(currentRole())}`, {

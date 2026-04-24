@@ -1,13 +1,46 @@
+const fs = require("fs");
+const path = require("path");
 const express = require("express");
 const { MongoClient } = require("mongodb");
 
+function loadEnvFile(filename) {
+  const envPath = path.join(__dirname, filename);
+  if (!fs.existsSync(envPath)) return false;
+
+  const content = fs.readFileSync(envPath, "utf8");
+  for (const line of content.split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) continue;
+    const separatorIndex = trimmed.indexOf("=");
+    if (separatorIndex === -1) continue;
+
+    const key = trimmed.slice(0, separatorIndex).trim();
+    let value = trimmed.slice(separatorIndex + 1).trim();
+    if (!key || process.env[key]) continue;
+    if (
+      (value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
+      value = value.slice(1, -1);
+    }
+    process.env[key] = value;
+  }
+
+  return true;
+}
+
+loadEnvFile(".env");
+
 const app = express();
 const PORT = Number(process.env.PORT || 3001);
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017";
+const MONGODB_URI = String(process.env.MONGODB_URI || "").trim();
 const DB_NAME = process.env.MONGODB_DB || "codetrack";
+const TEACHER_ROLE = "pro";
+const STUDENT_ROLE = "user";
 
 let client;
 let db;
+let initPromise;
 
 app.use(express.json({ limit: "1mb" }));
 app.use(express.static(__dirname));
@@ -25,6 +58,41 @@ const collections = () => ({
   notifications: db.collection("notifications"),
   activityLogs: db.collection("activity_logs")
 });
+
+function normalizeRole(role = "") {
+  if (role === "teacher") return TEACHER_ROLE;
+  if (role === "student") return STUDENT_ROLE;
+  return role;
+}
+
+async function authenticatedUserFromRequest(req) {
+  const email = String(req.headers["x-codetrack-email"] || "").trim().toLowerCase();
+  const role = normalizeRole(String(req.headers["x-codetrack-role"] || "").trim());
+  if (!email || !role) return null;
+  const { users } = collections();
+  const user = await users.findOne({ email });
+  if (!user || user.role !== role) return null;
+  return user;
+}
+
+async function requireAuthenticatedUser(req, res) {
+  const user = await authenticatedUserFromRequest(req);
+  if (!user) {
+    res.status(401).json({ error: "Please sign in to continue." });
+    return null;
+  }
+  return user;
+}
+
+async function requireRole(req, res, role) {
+  const user = await requireAuthenticatedUser(req, res);
+  if (!user) return null;
+  if (user.role !== role) {
+    res.status(403).json({ error: role === TEACHER_ROLE ? "Teacher access required." : "Student access required." });
+    return null;
+  }
+  return user;
+}
 
 function calcScore(outcome, code, notes = "") {
   const base = outcome === "passed" ? 85 : outcome === "partial" ? 70 : 55;
@@ -150,7 +218,20 @@ async function cleanupInvalidIds() {
 }
 
 async function initDatabase() {
-  client = new MongoClient(MONGODB_URI);
+  if (db) return db;
+  if (!MONGODB_URI) {
+    const envExists = fs.existsSync(path.join(__dirname, ".env"));
+    throw new Error(
+      envExists
+        ? "Missing MONGODB_URI in .env. Add your MongoDB Atlas connection string and restart CodeTrack."
+        : "Missing MONGODB_URI. Create a .env file in the project root and add your MongoDB Atlas connection string."
+    );
+  }
+
+  client = new MongoClient(MONGODB_URI, {
+    maxPoolSize: 10,
+    serverSelectionTimeoutMS: 10000
+  });
   await client.connect();
   db = client.db(DB_NAME);
 
@@ -190,6 +271,7 @@ async function initDatabase() {
 
   await cleanupInvalidIds();
   await seedDatabase();
+  return db;
 }
 
 async function seedDatabase() {
@@ -204,29 +286,29 @@ async function seedDatabase() {
   await exercises.insertMany([
     {
       id: exerciseOneId,
-      title: "Build a RESTful Tasks API",
-      language: "JavaScript",
-      difficulty: "Intermediate",
-      prompt: "Create CRUD endpoints for tasks with validation, pagination, and tests for core routes.",
-      link: "https://github.com/example/tasks-starter",
-      tags: ["api", "crud", "testing"],
+      title: "Print hello world",
+      language: "C",
+      difficulty: "Easy",
+      prompt: "Write a basic C program that prints Hello, World! to the screen.",
+      link: "",
+      tags: ["output", "syntax", "basics"],
       createdAt: exerciseOneCreated
     },
     {
       id: exerciseTwoId,
-      title: "CSV Metrics Pipeline",
-      language: "Python",
-      difficulty: "Advanced",
-      prompt: "Clean incoming CSV records, produce aggregates, and cover edge cases with unit tests.",
+      title: "Find the largest of two numbers",
+      language: "Java",
+      difficulty: "Easy",
+      prompt: "Write a Java program that compares two numbers and prints the larger one.",
       link: "",
-      tags: ["etl", "csv", "unit-tests"],
+      tags: ["comparison", "numbers", "basics"],
       createdAt: exerciseTwoCreated
     }
   ]);
 
-  const firstCode = "app.post('/tasks', validateTask, async (req, res) => {\n  const task = await service.create(req.body);\n  res.status(201).json(task);\n});";
-  const secondCode = "app.post('/tasks', validateTask, async (req, res) => {\n  const task = await service.create(req.body);\n  res.status(201).json(task);\n});\n\napp.get('/tasks', async (req, res) => {\n  const page = Number(req.query.page || 1);\n  res.json(await service.list({ page }));\n});";
-  const thirdCode = "def clean_rows(df):\n    return df.dropna()";
+  const firstCode = "#include <stdio.h>\n\nint main() {\n    printf(\"Hello, World!\\n\");\n    return 0;\n}";
+  const secondCode = "#include <stdio.h>\n\nint main() {\n    printf(\"Hello, World!\\n\");\n    return 0;\n}";
+  const thirdCode = "public class Main {\n    public static void main(String[] args) {\n        int a = 10;\n        int b = 20;\n\n        if (a > b) {\n            System.out.println(a);\n        } else {\n            System.out.println(b);\n        }\n    }\n}";
 
   const firstSubmissionId = await nextId("submissions");
   const secondSubmissionId = await nextId("submissions");
@@ -239,10 +321,10 @@ async function seedDatabase() {
       studentName: "Maya Sharma",
       studentEmail: "maya@example.com",
       code: firstCode,
-      notes: "Added validation middleware and one route test.",
+      notes: "Basic C program to print the message.",
       outcome: "partial",
       attempt: 1,
-      score: calcScore("partial", firstCode, "Added validation middleware and one route test."),
+      score: calcScore("partial", firstCode, "Basic C program to print the message."),
       status: "submitted",
       createdAt: new Date(Date.now() - 1000 * 60 * 60 * 21)
     },
@@ -252,10 +334,10 @@ async function seedDatabase() {
       studentName: "Maya Sharma",
       studentEmail: "maya@example.com",
       code: secondCode,
-      notes: "Added pagination and better error handling.",
+      notes: "Clean version with correct output and return statement.",
       outcome: "passed",
       attempt: 2,
-      score: calcScore("passed", secondCode, "Added pagination and better error handling."),
+      score: calcScore("passed", secondCode, "Clean version with correct output and return statement."),
       status: "approved",
       createdAt: new Date(Date.now() - 1000 * 60 * 60 * 6)
     },
@@ -265,10 +347,10 @@ async function seedDatabase() {
       studentName: "Adil Khan",
       studentEmail: "adil@example.com",
       code: thirdCode,
-      notes: "Baseline cleaning only so far.",
+      notes: "Used an if-else statement to print the larger number.",
       outcome: "failing",
       attempt: 1,
-      score: calcScore("failing", thirdCode, "Baseline cleaning only so far."),
+      score: calcScore("failing", thirdCode, "Used an if-else statement to print the larger number."),
       status: "submitted",
       createdAt: new Date(Date.now() - 1000 * 60 * 60 * 8)
     }
@@ -279,7 +361,7 @@ async function seedDatabase() {
     submissionId: secondSubmissionId,
     instructorName: "Priya",
     status: "approved",
-    comment: "Strong improvement. Add one explicit pagination edge-case test next.",
+    comment: "Good work. The program is simple and prints the expected output.",
     scoreOverride: 93,
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 5)
   });
@@ -306,7 +388,7 @@ async function seedDatabase() {
   });
 }
 
-async function readState() {
+async function readState(viewer = null) {
   const { exercises, submissions, reviewComments, progressComments, progressCommentReads, notifications, activityLogs } = collections();
   const [exerciseRows, submissionRows, reviewRows, progressCommentRows, progressCommentReadRows, notificationRows, activityRows] = await Promise.all([
     exercises.find().sort({ createdAt: -1, id: -1 }).toArray(),
@@ -318,7 +400,47 @@ async function readState() {
     activityLogs.find().sort({ createdAt: -1, id: -1 }).limit(150).toArray()
   ]);
 
-  const reviewsBySubmission = reviewRows.reduce((acc, row) => {
+  const viewerRole = viewer?.role || "";
+  const viewerEmail = String(viewer?.email || "").toLowerCase();
+  const visibleSubmissionRows =
+    viewerRole === TEACHER_ROLE
+      ? submissionRows
+      : viewerRole === STUDENT_ROLE
+        ? submissionRows.filter((row) => String(row.studentEmail || "").toLowerCase() === viewerEmail)
+        : [];
+  const visibleSubmissionIds = new Set(visibleSubmissionRows.map((row) => row.id));
+  const visibleReviewRows =
+    viewerRole === TEACHER_ROLE
+      ? reviewRows
+      : reviewRows.filter((row) => visibleSubmissionIds.has(row.submissionId));
+  const visibleProgressCommentRows =
+    viewerRole === TEACHER_ROLE
+      ? progressCommentRows
+      : viewerRole === STUDENT_ROLE
+        ? progressCommentRows.filter((row) => String(row.studentEmail || "").toLowerCase() === viewerEmail)
+        : [];
+  const visibleProgressCommentReadRows =
+    viewerRole === TEACHER_ROLE
+      ? progressCommentReadRows
+      : viewerRole === STUDENT_ROLE
+        ? progressCommentReadRows.filter((row) => String(row.studentEmail || "").toLowerCase() === viewerEmail)
+        : [];
+  const visibleNotificationRows =
+    viewerRole
+      ? notificationRows.filter(
+          (row) =>
+            String(row.recipientEmail || "").toLowerCase() === viewerEmail ||
+            (!row.recipientEmail && row.recipientRole === viewerRole)
+        )
+      : [];
+  const visibleActivityRows =
+    viewerRole === TEACHER_ROLE
+      ? activityRows
+      : viewerRole === STUDENT_ROLE
+        ? activityRows.filter((row) => String(row.actorEmail || "").toLowerCase() === viewerEmail)
+        : [];
+
+  const reviewsBySubmission = visibleReviewRows.reduce((acc, row) => {
     const review = {
       id: row.id,
       instructorName: row.instructorName,
@@ -343,7 +465,7 @@ async function readState() {
       tags: Array.isArray(row.tags) ? row.tags : [],
       createdAt: toTimestamp(row.createdAt)
     })),
-    submissions: submissionRows.map((row) => {
+    submissions: visibleSubmissionRows.map((row) => {
       const reviews = reviewsBySubmission[row.id] || [];
       const latestReview = reviews[reviews.length - 1];
       return {
@@ -362,7 +484,7 @@ async function readState() {
         createdAt: toTimestamp(row.createdAt)
       };
     }),
-    progressComments: progressCommentRows.map((row) => ({
+    progressComments: visibleProgressCommentRows.map((row) => ({
       id: row.id,
       studentEmail: row.studentEmail,
       exerciseId: row.exerciseId ?? null,
@@ -372,13 +494,13 @@ async function readState() {
       editedAt: row.editedAt ? toTimestamp(row.editedAt) : null,
       createdAt: toTimestamp(row.createdAt)
     })),
-    progressCommentReads: progressCommentReadRows.map((row) => ({
+    progressCommentReads: visibleProgressCommentReadRows.map((row) => ({
       id: row.id,
       commentId: row.commentId,
       studentEmail: row.studentEmail,
       seenAt: toTimestamp(row.seenAt)
     })),
-    notifications: notificationRows.map((row) => ({
+    notifications: visibleNotificationRows.map((row) => ({
       id: row.id,
       recipientEmail: row.recipientEmail || "",
       recipientRole: row.recipientRole || "",
@@ -390,7 +512,7 @@ async function readState() {
       readAt: row.readAt ? toTimestamp(row.readAt) : null,
       createdAt: toTimestamp(row.createdAt)
     })),
-    activityLogs: activityRows.map((row) => ({
+    activityLogs: visibleActivityRows.map((row) => ({
       id: row.id,
       actorEmail: row.actorEmail || "",
       actorRole: row.actorRole || "",
@@ -403,22 +525,25 @@ async function readState() {
     })),
     meta: {
       totalExercises: exerciseRows.length,
-      totalSubmissions: submissionRows.length,
-      totalReviews: reviewRows.length,
-      totalUsers: new Set(submissionRows.map((row) => row.studentEmail)).size
+      totalSubmissions: visibleSubmissionRows.length,
+      totalReviews: visibleReviewRows.length,
+      totalUsers: new Set(visibleSubmissionRows.map((row) => row.studentEmail)).size
     }
   };
 }
 
-app.get("/api/state", async (_req, res) => {
+app.get("/api/state", async (req, res) => {
   try {
-    res.json(await readState());
+    const viewer = await authenticatedUserFromRequest(req);
+    res.json(await readState(viewer));
   } catch (error) {
     res.status(500).json({ error: "Could not load database state.", details: error.message });
   }
 });
 
 app.post("/api/exercises", async (req, res) => {
+  const actor = await requireRole(req, res, TEACHER_ROLE);
+  if (!actor) return;
   const title = String(req.body.title || "").trim();
   const language = String(req.body.language || "").trim();
   const difficulty = String(req.body.difficulty || "").trim();
@@ -444,7 +569,8 @@ app.post("/api/exercises", async (req, res) => {
     };
     await exercises.insertOne(exercise);
     await logActivity({
-      actorRole: "pro",
+      actorEmail: actor.email,
+      actorRole: actor.role,
       action: "exercise_created",
       entityType: "exercise",
       entityId: exercise.id,
@@ -458,9 +584,11 @@ app.post("/api/exercises", async (req, res) => {
 });
 
 app.post("/api/submissions", async (req, res) => {
+  const actor = await requireRole(req, res, STUDENT_ROLE);
+  if (!actor) return;
   const exerciseId = Number(req.body.exerciseId);
-  const studentName = String(req.body.studentName || "").trim();
-  const studentEmail = String(req.body.studentEmail || "").trim().toLowerCase();
+  const studentName = String(req.body.studentName || "").trim() || String(actor.fullName || "").trim() || "Student";
+  const studentEmail = actor.email;
   const code = String(req.body.code || "").trim();
   const notes = String(req.body.notes || "").trim();
   const outcome = String(req.body.outcome || "").trim();
@@ -519,10 +647,12 @@ app.post("/api/submissions", async (req, res) => {
 });
 
 app.patch("/api/submissions/:id/review", async (req, res) => {
+  const actor = await requireRole(req, res, TEACHER_ROLE);
+  if (!actor) return;
   const submissionId = Number(req.params.id);
   const status = String(req.body.status || "").trim();
   const comment = String(req.body.comment || "").trim();
-  const instructorName = String(req.body.instructorName || "Instructor").trim() || "Instructor";
+  const instructorName = String(req.body.instructorName || actor.fullName || "Instructor").trim() || "Instructor";
   const scoreOverride = req.body.scoreOverride == null || req.body.scoreOverride === "" ? null : Number(req.body.scoreOverride);
   const allowedStatuses = new Set(["submitted", "approved", "changes"]);
 
@@ -546,7 +676,8 @@ app.patch("/api/submissions/:id/review", async (req, res) => {
       createdAt: new Date()
     });
     await logActivity({
-      actorRole: "pro",
+      actorEmail: actor.email,
+      actorRole: actor.role,
       action: "submission_reviewed",
       entityType: "submission",
       entityId: submissionId,
@@ -563,7 +694,7 @@ app.patch("/api/submissions/:id/review", async (req, res) => {
       relatedId: submissionId
     });
 
-    const state = await readState();
+    const state = await readState(actor);
     res.json(state.submissions.find((item) => item.id === submissionId));
   } catch (error) {
     res.status(500).json({ error: "Could not save review.", details: error.message });
@@ -599,16 +730,22 @@ app.post("/api/contact", async (req, res) => {
 });
 
 app.post("/api/progress-comments", async (req, res) => {
+  const actor = await requireAuthenticatedUser(req, res);
+  if (!actor) return;
   const studentEmail = String(req.body.studentEmail || "").trim().toLowerCase();
   const exerciseId = req.body.exerciseId === null || req.body.exerciseId === "" || req.body.exerciseId === "all"
     ? null
     : Number(req.body.exerciseId);
-  const authorRole = req.body.authorRole === "pro" ? "pro" : "user";
-  const authorName = String(req.body.authorName || "").trim() || (authorRole === "pro" ? "Teacher" : "Student");
+  const authorRole = actor.role;
+  const authorName = String(req.body.authorName || actor.fullName || "").trim() || (authorRole === TEACHER_ROLE ? "Teacher" : "Student");
   const comment = String(req.body.comment || "").trim();
 
   if (!studentEmail || !comment) {
     return res.status(400).json({ error: "Student email and comment are required." });
+  }
+
+  if (authorRole === STUDENT_ROLE && studentEmail !== actor.email) {
+    return res.status(403).json({ error: "Students can only comment on their own progress." });
   }
 
   try {
@@ -622,6 +759,7 @@ app.post("/api/progress-comments", async (req, res) => {
       studentEmail,
       exerciseId,
       authorRole,
+      authorEmail: actor.email,
       authorName,
       comment,
       editedAt: null,
@@ -630,7 +768,7 @@ app.post("/api/progress-comments", async (req, res) => {
 
     await progressComments.insertOne(progressComment);
     await logActivity({
-      actorEmail: authorRole === "user" ? studentEmail : "",
+      actorEmail: actor.email,
       actorRole: authorRole,
       action: "progress_comment_created",
       entityType: "progress_comment",
@@ -656,9 +794,11 @@ app.post("/api/progress-comments", async (req, res) => {
 });
 
 app.patch("/api/progress-comments/:id", async (req, res) => {
+  const actor = await requireAuthenticatedUser(req, res);
+  if (!actor) return;
   const commentId = Number(req.params.id);
   const comment = String(req.body.comment || "").trim();
-  const authorRole = req.body.authorRole === "pro" ? "pro" : "user";
+  const authorRole = actor.role;
 
   if (!commentId || !comment) {
     return res.status(400).json({ error: "Comment id and updated text are required." });
@@ -671,16 +811,20 @@ app.patch("/api/progress-comments/:id", async (req, res) => {
     if (existing.authorRole !== authorRole) {
       return res.status(403).json({ error: "You can only edit comments created by the same role." });
     }
+    if (authorRole === STUDENT_ROLE && String(existing.authorEmail || existing.studentEmail || "").toLowerCase() !== actor.email) {
+      return res.status(403).json({ error: "You can only edit your own comments." });
+    }
 
     await progressComments.updateOne({ id: commentId }, { $set: { comment, editedAt: new Date() } });
     await logActivity({
+      actorEmail: actor.email,
       actorRole: authorRole,
       action: "progress_comment_updated",
       entityType: "progress_comment",
       entityId: commentId,
       description: "Progress comment updated"
     });
-    const state = await readState();
+    const state = await readState(actor);
     res.json(state.progressComments.find((item) => item.id === commentId));
   } catch (error) {
     res.status(500).json({ error: "Could not update progress comment.", details: error.message });
@@ -688,8 +832,10 @@ app.patch("/api/progress-comments/:id", async (req, res) => {
 });
 
 app.delete("/api/progress-comments/:id", async (req, res) => {
+  const actor = await requireAuthenticatedUser(req, res);
+  if (!actor) return;
   const commentId = Number(req.params.id);
-  const authorRole = req.query.authorRole === "pro" ? "pro" : "user";
+  const authorRole = actor.role;
 
   if (!commentId) {
     return res.status(400).json({ error: "Comment id is required." });
@@ -702,10 +848,14 @@ app.delete("/api/progress-comments/:id", async (req, res) => {
     if (existing.authorRole !== authorRole) {
       return res.status(403).json({ error: "You can only delete comments created by the same role." });
     }
+    if (authorRole === STUDENT_ROLE && String(existing.authorEmail || existing.studentEmail || "").toLowerCase() !== actor.email) {
+      return res.status(403).json({ error: "You can only delete your own comments." });
+    }
 
     await progressComments.deleteOne({ id: commentId });
     await progressCommentReads.deleteMany({ commentId });
     await logActivity({
+      actorEmail: actor.email,
       actorRole: authorRole,
       action: "progress_comment_deleted",
       entityType: "progress_comment",
@@ -719,11 +869,16 @@ app.delete("/api/progress-comments/:id", async (req, res) => {
 });
 
 app.post("/api/progress-comments/read", async (req, res) => {
+  const actor = await requireRole(req, res, STUDENT_ROLE);
+  if (!actor) return;
   const studentEmail = String(req.body.studentEmail || "").trim().toLowerCase();
   const commentIds = Array.isArray(req.body.commentIds) ? req.body.commentIds.map((id) => Number(id)).filter(Boolean) : [];
 
   if (!studentEmail || !commentIds.length) {
     return res.status(400).json({ error: "Student email and comment ids are required." });
+  }
+  if (studentEmail !== actor.email) {
+    return res.status(403).json({ error: "Students can only mark their own comments as read." });
   }
 
   try {
@@ -742,8 +897,8 @@ app.post("/api/progress-comments/read", async (req, res) => {
       }
     }
     await logActivity({
-      actorEmail: studentEmail,
-      actorRole: "user",
+      actorEmail: actor.email,
+      actorRole: actor.role,
       action: "progress_comments_read",
       entityType: "progress_comment_reads",
       description: `${commentIds.length} progress comments marked as read`,
@@ -756,6 +911,8 @@ app.post("/api/progress-comments/read", async (req, res) => {
 });
 
 app.post("/api/notifications/read", async (req, res) => {
+  const actor = await requireAuthenticatedUser(req, res);
+  if (!actor) return;
   const notificationIds = Array.isArray(req.body.notificationIds)
     ? req.body.notificationIds.map((id) => Number(id)).filter(Boolean)
     : [];
@@ -767,7 +924,13 @@ app.post("/api/notifications/read", async (req, res) => {
   try {
     const { notifications } = collections();
     await notifications.updateMany(
-      { id: { $in: notificationIds } },
+      {
+        id: { $in: notificationIds },
+        $or: [
+          { recipientEmail: actor.email },
+          { recipientRole: actor.role, recipientEmail: "" }
+        ]
+      },
       { $set: { readAt: now() } }
     );
     res.json({ status: "ok", count: notificationIds.length });
@@ -883,12 +1046,23 @@ app.post("/api/auth", async (req, res) => {
   }
 });
 
+async function ensureDatabase() {
+  if (db) return db;
+  if (!initPromise) {
+    initPromise = initDatabase().catch((error) => {
+      initPromise = null;
+      throw error;
+    });
+  }
+  return initPromise;
+}
+
 async function start() {
   try {
-    await initDatabase();
+    await ensureDatabase();
     const server = app.listen(PORT, () => {
       console.log(`CodeTrack running on http://localhost:${PORT}`);
-      console.log(`Using MongoDB database "${DB_NAME}" at ${MONGODB_URI}`);
+      console.log(`Using MongoDB database "${DB_NAME}" through the configured Atlas connection.`);
     });
 
     server.on("error", (error) => {
@@ -907,4 +1081,9 @@ async function start() {
   }
 }
 
-start();
+if (require.main === module) {
+  start();
+}
+
+app.ready = ensureDatabase;
+module.exports = app;

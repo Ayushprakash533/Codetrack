@@ -8,10 +8,10 @@
   },
   "dependencies": {
     "express": "^4.22.1",
+    "install": "^0.13.0",
     "mongodb": "^6.15.0",
     "mongoose": "^9.4.1"
   },
-  "devDependencies": {},
   "keywords": [],
   "author": "",
   "license": "ISC",
