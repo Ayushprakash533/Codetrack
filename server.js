@@ -42,6 +42,30 @@ let client;
 let db;
 let initPromise;
 
+function isAllowedOrigin(origin = "") {
+  return (
+    /^https?:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(origin) ||
+    /^https:\/\/[a-z0-9-]+\.vercel\.app$/.test(origin)
+  );
+}
+
+app.use((req, res, next) => {
+  const origin = String(req.headers.origin || "");
+
+  if (origin && isAllowedOrigin(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Vary", "Origin");
+    res.setHeader("Access-Control-Allow-Methods", "GET,POST,PATCH,DELETE,OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, X-CodeTrack-Email, X-CodeTrack-Role");
+  }
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(204);
+  }
+
+  next();
+});
+
 app.use(express.json({ limit: "1mb" }));
 app.use(express.static(__dirname));
 
@@ -271,6 +295,7 @@ async function initDatabase() {
 
   await cleanupInvalidIds();
   await seedDatabase();
+  await ensureDefaultAccounts();
   return db;
 }
 
@@ -386,6 +411,39 @@ async function seedDatabase() {
     lastLoginAt: null,
     createdAt: new Date()
   });
+}
+
+async function ensureDefaultAccounts() {
+  const { users } = collections();
+  const defaultUsers = [
+    {
+      email: "teacher@example.com",
+      password: "teacher123",
+      role: "pro",
+      fullName: "Priya Instructor"
+    },
+    {
+      email: "maya@example.com",
+      password: "student123",
+      role: "user",
+      fullName: "Maya Sharma"
+    }
+  ];
+
+  for (const defaultUser of defaultUsers) {
+    const existingUser = await users.findOne({ email: defaultUser.email });
+    if (existingUser) continue;
+
+    await users.insertOne({
+      id: await nextId("users"),
+      email: defaultUser.email,
+      password: defaultUser.password,
+      role: defaultUser.role,
+      fullName: defaultUser.fullName,
+      lastLoginAt: null,
+      createdAt: new Date()
+    });
+  }
 }
 
 async function readState(viewer = null) {

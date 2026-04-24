@@ -1,4 +1,16 @@
-const API_BASE = "/api";
+const API_BASE = (() => {
+  const { protocol, hostname, port } = window.location;
+  const isLocalStaticPreview =
+    (hostname === "127.0.0.1" || hostname === "localhost") &&
+    port &&
+    port !== "3000";
+
+  if (isLocalStaticPreview) {
+    return `${protocol}//${hostname}:3000/api`;
+  }
+
+  return "/api";
+})();
 const TEACHER_ROLE = "pro";
 const STUDENT_ROLE = "user";
 const DEFAULT_REDIRECTS = {
@@ -148,6 +160,20 @@ function buildProfilePayload(form, role) {
   return {};
 }
 
+function setActiveRole(role) {
+  const normalizedRole = normalizeRole(role);
+  const buttons = document.querySelectorAll(".segmented-btn");
+  if (!buttons.length) return;
+
+  buttons.forEach((btn) => {
+    const isActive = btn.dataset.role === normalizedRole;
+    btn.classList.toggle("active", isActive);
+    btn.setAttribute("aria-selected", isActive ? "true" : "false");
+  });
+
+  updateRoleFootnote(normalizedRole);
+}
+
 function wireAuthForm(form) {
   if (!form) return;
   form.addEventListener("submit", async (e) => {
@@ -217,7 +243,13 @@ function wireAuthForm(form) {
       const destination = next || DEFAULT_REDIRECTS[normalizedRole] || "index.html";
       setTimeout(() => (window.location.href = destination), 600);
     } catch (err) {
-      toast(err.message || "Authentication failed.", true);
+      const message = err?.message || "Authentication failed.";
+      if (message.includes("registered as a teacher")) {
+        setActiveRole("pro");
+      } else if (message.includes("registered as a student")) {
+        setActiveRole("user");
+      }
+      toast(message, true);
     }
   });
 }
@@ -301,9 +333,7 @@ function wireRoleToggle() {
   if (!buttons.length) return;
   buttons.forEach((btn) => {
     btn.addEventListener("click", () => {
-      buttons.forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
-      updateRoleFootnote(btn.dataset.role);
+      setActiveRole(btn.dataset.role);
     });
   });
 }
@@ -326,12 +356,7 @@ document.addEventListener("DOMContentLoaded", () => {
     roleParam === "teacher" ? "pro" : roleParam === "student" ? "user" : roleParam;
 
   if (normalizedRole) {
-    const btn = document.querySelector(`.segmented-btn[data-role='${normalizedRole}']`);
-    if (btn) {
-      document.querySelectorAll(".segmented-btn").forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
-      updateRoleFootnote(normalizedRole);
-    }
+    setActiveRole(normalizedRole);
   }
 
   wireContactForm();

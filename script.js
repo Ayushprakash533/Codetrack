@@ -1,5 +1,17 @@
 (function () {
-  const API_BASE = "/api";
+  const API_BASE = (() => {
+    const { protocol, hostname, port } = window.location;
+    const isLocalStaticPreview =
+      (hostname === "127.0.0.1" || hostname === "localhost") &&
+      port &&
+      port !== "3000";
+
+    if (isLocalStaticPreview) {
+      return `${protocol}//${hostname}:3000/api`;
+    }
+
+    return "/api";
+  })();
   const $ = (id) => document.getElementById(id);
   const normalizeRole = (role = "") => role === "teacher" ? "pro" : role === "student" ? "user" : role;
   const fmtDate = (ts) =>
