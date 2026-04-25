@@ -2297,26 +2297,55 @@ summary::-webkit-details-marker {
 #reviewDesk {
   display: flex;
   flex-direction: column;
-  height: min(80vh, 940px);
-  overflow: hidden;
+  gap: 20px;
+  width: 100%;
+  min-height: 720px;
+  padding: 28px 32px 36px;
+  border-radius: 34px;
+  overflow: visible;
 }
 
 #reviewDesk .section-head {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  background: var(--card-strong);
-  padding-bottom: 10px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
+  position: static;
+  background: transparent;
+  padding-bottom: 24px;
   flex: 0 0 auto;
+  border-bottom: 1px solid var(--border);
+}
+
+#reviewDesk .section-head h2 {
+  margin-bottom: 0;
+  font-size: clamp(42px, 5vw, 62px);
+  line-height: 0.98;
+}
+
+#reviewDesk .chip-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(240px, 1fr));
+  gap: 20px;
+  width: 100%;
+}
+
+#reviewDesk .chip-row .input {
+  width: 100%;
+}
+
+#reviewDesk .chip-row select {
+  min-height: 72px;
+  border-radius: 24px;
+  font-size: 17px;
+  padding-inline: 18px;
 }
 
 #submissionList {
   flex: 1 1 auto;
-  min-height: 0;
-  overflow-y: auto;
-  padding-right: 6px;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(7, 11, 20, 0.18) transparent;
+  min-height: auto;
+  overflow: visible;
+  padding-right: 0;
+  gap: 20px;
 }
 
 #submissionList::-webkit-scrollbar {
@@ -2658,14 +2687,17 @@ summary::-webkit-details-marker {
   }
 
   #reviewDesk {
-    height: auto;
-    max-height: none;
-    overflow: visible;
+    min-height: auto;
+    padding: 22px 20px 24px;
   }
 
   #reviewDesk .section-head {
-    position: static;
-    padding-bottom: 0;
+    gap: 18px;
+    padding-bottom: 18px;
+  }
+
+  #reviewDesk .chip-row {
+    grid-template-columns: 1fr;
   }
 
   #submissionList {
@@ -2955,7 +2987,8 @@ summary::-webkit-details-marker {
   }
 
   #reviewDesk {
-    padding-bottom: 18px;
+    border-radius: 26px;
+    padding-bottom: 22px;
   }
 
   .chip-row {
