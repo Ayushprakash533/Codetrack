@@ -122,15 +122,6 @@ async function requireRole(req, res, role) {
   return user;
 }
 
-function calcScore(outcome, code, notes = "") {
-  // This is a lightweight heuristic for demo feedback, not an actual code runner.
-  const base = outcome === "passed" ? 85 : outcome === "partial" ? 70 : 55;
-  const structure = Math.min(10, (code.match(/function|class|def|=>|return/gi) || []).length * 2);
-  const clarity = Math.min(8, Math.round(notes.length / 25));
-  const lengthBonus = Math.min(12, Math.round(code.split("\n").length / 3));
-  return Math.min(100, base + structure + clarity + lengthBonus);
-}
-
 function storedPasswordForUser(user) {
   if (!user) return "";
   return String(
@@ -432,7 +423,6 @@ async function readState(viewer = null) {
         studentEmail: row.studentEmail,
         code: row.code,
         notes: row.notes || "",
-        outcome: row.outcome,
         status: row.status,
         attempt: row.attempt,
         score: latestReview?.scoreOverride ?? row.score,
@@ -529,7 +519,7 @@ app.post("/api/exercises", async (req, res) => {
       entityType: "exercise",
       entityId: exercise.id,
       description: `Exercise created: ${title}`,
-      metadata: { language, difficulty, tagsCount: tags.length }
+      metadata: { language, difficulty }
     });
     res.status(201).json({ ...exercise, createdAt: toTimestamp(exercise.createdAt) });
   } catch (error) {
