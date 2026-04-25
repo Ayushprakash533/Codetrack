@@ -163,7 +163,10 @@ function wireContactForm() {
 }
 
 function buildProfilePayload(form, role) {
-  return {};
+  const fullName = form.querySelector("input[type='text']")?.value || "";
+  return {
+    fullName: fullName.trim()
+  };
 }
 
 function setActiveRole(role) {
