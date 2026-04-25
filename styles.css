@@ -2294,6 +2294,29 @@ summary::-webkit-details-marker {
   gap: 12px;
 }
 
+.submission-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(280px, 0.95fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.submission-main,
+.submission-review {
+  min-width: 0;
+}
+
+.submission-review {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.16), transparent),
+    var(--glass);
+}
+
 #reviewDesk {
   display: flex;
   flex-direction: row;
@@ -2484,13 +2507,17 @@ summary::-webkit-details-marker {
 
 .feedback-row {
   display: grid;
-  grid-template-columns: 140px 1fr auto;
+  grid-template-columns: 1fr;
   gap: 10px;
   align-items: end;
 }
 
+.feedback-row button {
+  width: 100%;
+}
+
 .feedback-row textarea {
-  min-height: 64px;
+  min-height: 120px;
 }
 
 .review-history {
@@ -2874,6 +2901,10 @@ summary::-webkit-details-marker {
   }
 
   .feedback-row {
+    grid-template-columns: 1fr;
+  }
+
+  .submission-layout {
     grid-template-columns: 1fr;
   }
 

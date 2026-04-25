@@ -349,41 +349,52 @@
         const delta = calcDelta(submission);
 
         return `<article class="card compact submission" id="card-${submission.id}">
-          <div class="card-row">
-            <div>
-              <div class="meta-row space">
-                <strong>${escapeHTML(submission.studentName)}</strong>
-                <span class="pill ${statusClass(submission.status)}">${statusLabel(submission.status)}</span>
+          <div class="submission-layout">
+            <div class="submission-main">
+              <div class="card-row">
+                <div>
+                  <div class="meta-row space">
+                    <strong>${escapeHTML(submission.studentName)}</strong>
+                    <span class="pill ${statusClass(submission.status)}">${statusLabel(submission.status)}</span>
+                  </div>
+                  <p class="muted">${escapeHTML(exercise ? exercise.title : "Exercise")} • Attempt ${submission.attempt} • ${fmtDate(submission.createdAt)}</p>
+                </div>
+                <div class="meta-block right">
+                  <span class="pill ghost">${escapeHTML(exercise?.language || "")}</span>
+                  ${submission.score != null ? `<span class="pill ghost">Score ${submission.score}</span>` : ""}
+                  ${delta ? `<span class="pill ${delta > 0 ? "success" : "warn"}">${delta > 0 ? "+" : ""}${delta} vs prev</span>` : ""}
+                </div>
               </div>
-              <p class="muted">${escapeHTML(exercise ? exercise.title : "Exercise")} • Attempt ${submission.attempt} • ${fmtDate(submission.createdAt)}</p>
+              <pre class="code-snippet">${escapeHTML(submission.code).slice(0, 1200)}</pre>
+              <p class="muted">Student notes: ${escapeHTML(submission.notes || "None")}</p>
+              ${renderReviewHistory(submission)}
             </div>
-            <div class="meta-block right">
-              <span class="pill ghost">${escapeHTML(exercise?.language || "")}</span>
-              ${submission.score != null ? `<span class="pill ghost">Score ${submission.score}</span>` : ""}
-              ${delta ? `<span class="pill ${delta > 0 ? "success" : "warn"}">${delta > 0 ? "+" : ""}${delta} vs prev</span>` : ""}
+            <div class="submission-review">
+              <div class="meta-row space">
+                <strong>Review</strong>
+                <span class="pill ghost">Attempt ${submission.attempt}</span>
+              </div>
+              <p class="muted">Update status, score, and feedback for this submission.</p>
+              <div class="feedback-row">
+                <label>
+                  <span>Status</span>
+                  <select data-action="status" data-id="${submission.id}">
+                    <option value="submitted" ${submission.status === "submitted" ? "selected" : ""}>Needs review</option>
+                    <option value="approved" ${submission.status === "approved" ? "selected" : ""}>Approved</option>
+                    <option value="changes" ${submission.status === "changes" ? "selected" : ""}>Changes requested</option>
+                  </select>
+                </label>
+                <label>
+                  <span>Score (0-100)</span>
+                  <input type="number" min="0" max="100" data-action="score" data-id="${submission.id}" value="${submission.score || ""}" placeholder="Enter score">
+                </label>
+                <label class="grow">
+                  <span>Instructor comment</span>
+                  <textarea rows="2" data-action="comment" data-id="${submission.id}" placeholder="Give concrete feedback">${escapeHTML(submission.latestComment || "")}</textarea>
+                </label>
+                <button class="solid" data-action="save" data-id="${submission.id}" type="button">Save</button>
+              </div>
             </div>
-          </div>
-          <pre class="code-snippet">${escapeHTML(submission.code).slice(0, 1200)}</pre>
-          <p class="muted">Student notes: ${escapeHTML(submission.notes || "None")}</p>
-          ${renderReviewHistory(submission)}
-          <div class="feedback-row">
-            <label>
-              <span>Status</span>
-              <select data-action="status" data-id="${submission.id}">
-                <option value="submitted" ${submission.status === "submitted" ? "selected" : ""}>Needs review</option>
-                <option value="approved" ${submission.status === "approved" ? "selected" : ""}>Approved</option>
-                <option value="changes" ${submission.status === "changes" ? "selected" : ""}>Changes requested</option>
-              </select>
-            </label>
-            <label>
-              <span>Score (0-100)</span>
-              <input type="number" min="0" max="100" data-action="score" data-id="${submission.id}" value="${submission.score || ""}" placeholder="Enter score">
-            </label>
-            <label class="grow">
-              <span>Instructor comment</span>
-              <textarea rows="2" data-action="comment" data-id="${submission.id}" placeholder="Give concrete feedback">${escapeHTML(submission.latestComment || "")}</textarea>
-            </label>
-            <button class="solid" data-action="save" data-id="${submission.id}" type="button">Save</button>
           </div>
         </article>`;
       })
