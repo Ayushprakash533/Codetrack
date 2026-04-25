@@ -18,8 +18,10 @@
   <script defer src="script.js"></script>
 </head>
 <body data-requires-role="pro">
+  <!-- Announcement bar shown before the teacher workspace -->
   <div class="announcement">New CodeTrack classroom release is live. <a href="exercises.html">Explore the workspace →</a></div>
   <div class="page">
+    <!-- Main navigation bar for the exercise management page -->
     <header class="nav">
       <div class="brand">
         <div class="brand-mark">C</div>
@@ -53,6 +55,7 @@
     </header>
 
     <main>
+      <!-- Hero section describing the teacher exercise workspace -->
       <section class="hero code-hero">
         <div class="hero-copy">
           <p class="eyebrow">Teacher Exercise Workspace</p>
@@ -119,6 +122,7 @@
         </div>
       </section>
 
+      <!-- Main teacher workspace with the exercise form and exercise library -->
       <section class="panel-grid" data-role-only="pro">
         <article class="card form-card" id="exerciseForm">
           <div class="section-head">
@@ -128,6 +132,7 @@
               <p class="muted">Add a new exercise with a clear prompt, technical context, and optional starter reference.</p>
             </div>
           </div>
+          <!-- Form used by teachers to publish a new exercise -->
           <form id="newExerciseForm" class="stacked-form">
             <label class="input">
               <span>Title</span>
@@ -173,6 +178,7 @@
         </article>
 
         <article class="card" id="exerciseLibrary">
+          <!-- Exercise list area used to browse and sort published exercises -->
           <div class="section-head">
             <div>
               <p class="eyebrow">Library</p>

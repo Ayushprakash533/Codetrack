@@ -17,8 +17,10 @@
   <script defer src="app.js"></script>
 </head>
 <body>
+  <!-- Announcement bar shown before the login page content -->
   <div class="announcement">New CodeTrack classroom release is live. <a href="exercises.html">Explore the workspace →</a></div>
   <div class="page">
+    <!-- Main navigation bar for public pages and account actions -->
     <header class="nav">
       <div class="brand">
         <div class="brand-mark">C</div>
@@ -41,6 +43,7 @@
     </header>
 
     <main class="auth">
+      <!-- Authentication hero section for returning users -->
       <section class="hero auth-hero">
         <div class="hero-copy">
           <p class="eyebrow">Welcome back</p>
@@ -53,12 +56,14 @@
           </div>
         </div>
 
+        <!-- Login card with role toggle and sign-in form -->
         <div class="auth-card">
           <div class="segmented" role="tablist">
             <button class="segmented-btn active" data-role="user" aria-selected="true">Student</button>
             <button class="segmented-btn" data-role="pro" aria-selected="false">Teacher</button>
           </div>
 
+          <!-- Form used by students and teachers to sign in -->
           <form class="auth-form" id="authForm">
             <label>
               <span>Email</span>
@@ -76,6 +81,7 @@
             <p class="auth-switch">New here? <a href="signup.html">Create an account</a></p>
           </form>
 
+          <!-- Helper text and demo credentials shown below the form -->
           <div class="auth-footnote">
             <p class="muted">Choose the correct role before signing in so you land on the right workspace after login.</p>
             <p class="muted">Demo teacher: <strong>teacher@example.com</strong> / <strong>teacher123</strong></p>

@@ -5,6 +5,8 @@ const API_BASE = (() => {
     port &&
     port !== "3000";
 
+  // When the HTML is opened from a separate static preview port, still target
+  // the local API server instead of the preview origin.
   if (isLocalStaticPreview) {
     return `${protocol}//${hostname}:3000/api`;
   }
@@ -45,6 +47,8 @@ async function postJSON(path, payload) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      // The backend uses these headers to recover the active demo session
+      // because there is no token/session middleware in this project.
       ...(email ? { "X-CodeTrack-Email": email } : {}),
       ...(role ? { "X-CodeTrack-Role": role } : {})
     },
@@ -268,6 +272,8 @@ function setupCaptcha() {
     digits[Math.floor(Math.random() * digits.length)]
   ];
 
+  // Guarantee at least one letter and one digit so the challenge stays readable
+  // without degenerating into a single character class.
   while (captchaChars.length < 6) {
     captchaChars.push(chars[Math.floor(Math.random() * chars.length)]);
   }

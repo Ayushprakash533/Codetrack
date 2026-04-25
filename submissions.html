@@ -18,8 +18,10 @@
   <script defer src="script.js"></script>
 </head>
 <body data-requires-auth="true">
+  <!-- Announcement bar shown at the top of the submissions page -->
   <div class="announcement">New CodeTrack classroom release is live. <a href="exercises.html">Explore the workspace →</a></div>
   <div class="page">
+    <!-- Main navigation bar for submissions and review workflows -->
     <header class="nav">
       <div class="brand">
         <div class="brand-mark">C</div>
@@ -43,12 +45,14 @@
     </header>
 
     <main>
+      <!-- Hero section combining the student submission form and teacher queue -->
       <section class="hero code-hero">
         <div class="hero-copy">
           <p class="eyebrow">Submission Center</p>
           <h1>Submit solutions and review student attempts from one workspace.</h1>
           <p class="lead">Students use this page to send their code for review, while teachers use the same workspace to inspect attempts, filter submissions, and respond with feedback.</p>
         </div>
+        <!-- Student form used to submit a new coding attempt -->
         <article class="card form-card" id="studentForm" data-hide-for-role="pro">
           <div class="section-head">
             <div>
@@ -93,6 +97,7 @@
             <button type="submit" class="solid full">Submit attempt</button>
           </form>
         </article>
+        <!-- Teacher queue used to show the most recent pending submissions -->
         <div class="hero-card stacked" data-role-only="pro">
           <div class="floating-label">Teacher queue</div>
           <h3>Submissions waiting for review</h3>
@@ -102,6 +107,7 @@
         </div>
       </section>
 
+      <!-- Teacher review desk used to filter and review submitted attempts -->
       <section class="section">
         <article class="card hidden" id="reviewDesk" data-role-only="pro">
           <div class="section-head">

@@ -18,8 +18,10 @@
   <script defer src="script.js"></script>
 </head>
 <body data-requires-auth="true">
+  <!-- Announcement bar shown at the top of the progress page -->
   <div class="announcement">New CodeTrack classroom release is live. <a href="exercises.html">Explore the workspace →</a></div>
   <div class="page">
+    <!-- Main navigation bar for progress and related pages -->
     <header class="nav">
       <div class="brand">
         <div class="brand-mark">C</div>
@@ -43,6 +45,7 @@
     </header>
 
     <main>
+      <!-- Hero section explaining the purpose of the progress tracker -->
       <section class="hero code-hero">
         <div class="hero-copy">
           <p class="eyebrow">Progress Tracking</p>
@@ -95,6 +98,7 @@
         </div>
       </section>
 
+      <!-- Main progress workspace with filters, timeline, and discussion -->
       <section class="panel-grid" id="progressTracker">
         <article class="card">
           <div class="section-head">
@@ -113,9 +117,11 @@
               </label>
             </div>
           </div>
+          <!-- Summary area that shows key progress metrics and attempt history -->
           <div id="progressSummary" class="muted"></div>
           <div id="progressHighlights" class="stat-grid compact-stats"></div>
           <div id="timeline" class="timeline"></div>
+          <!-- Discussion area for teacher comments and student replies -->
           <div class="discussion-box">
             <div class="section-head">
               <div>
@@ -134,6 +140,7 @@
           </div>
         </article>
 
+        <!-- Help panel describing how to interpret the tracker data -->
         <article class="card">
           <div class="section-head">
             <div>

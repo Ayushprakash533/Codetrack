@@ -6,6 +6,7 @@
       port &&
       port !== "3000";
 
+    // Static previews run on a different port than the Express API during local development.
     if (isLocalStaticPreview) {
       return `${protocol}//${hostname}:3000/api`;
     }
@@ -89,6 +90,8 @@
   function progressUnreadCount() {
     const email = currentEmail();
     if (currentRole() !== "user" || !email) return 0;
+    // Read state is tracked separately so teacher comments can stay unread
+    // without mutating the comment documents themselves.
     const readIds = new Set(
       (state.progressCommentReads || [])
         .filter((item) => item.studentEmail === email)
@@ -277,6 +280,8 @@
   }
 
   function calcDelta(submission) {
+    // Compare only against the student's previous attempt for the same exercise,
+    // which keeps progress labels meaningful across multiple exercises.
     const previous = state.submissions
       .filter(
         (item) =>
@@ -492,6 +497,8 @@
     const loggedIn = Boolean(currentEmail());
     const selectedExerciseId = exerciseFilter && exerciseFilter !== "all" ? Number(exerciseFilter) : null;
     const canManageTeacherComments = role === "pro";
+    // A separate read-tracking collection lets the UI show "New" markers
+    // per student without duplicating comment content.
     const readIds = new Set(
       (state.progressCommentReads || [])
         .filter((item) => item.studentEmail === studentEmail)

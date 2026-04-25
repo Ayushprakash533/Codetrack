@@ -7,6 +7,8 @@ function loadEnvFile(filename) {
   const envPath = path.join(__dirname, filename);
   if (!fs.existsSync(envPath)) return false;
 
+  // Keep env loading dependency-free so the same file works in local dev
+  // and in simple classroom/demo environments without extra setup.
   const content = fs.readFileSync(envPath, "utf8");
   for (const line of content.split(/\r?\n/)) {
     const trimmed = line.trim();
@@ -69,6 +71,8 @@ app.use((req, res, next) => {
 app.use(express.json({ limit: "1mb" }));
 app.use(express.static(path.join(__dirname, ".")));
 
+// Centralizing collection access keeps route handlers concise once the
+// database connection has been established.
 const collections = () => ({
   counters: db.collection("counters"),
   users: db.collection("users"),
@@ -119,6 +123,7 @@ async function requireRole(req, res, role) {
 }
 
 function calcScore(outcome, code, notes = "") {
+  // This is a lightweight heuristic for demo feedback, not an actual code runner.
   const base = outcome === "passed" ? 85 : outcome === "partial" ? 70 : 55;
   const structure = Math.min(10, (code.match(/function|class|def|=>|return/gi) || []).length * 2);
   const clarity = Math.min(8, Math.round(notes.length / 25));
@@ -197,6 +202,8 @@ async function logActivity({
 
 async function nextId(name) {
   const { counters } = collections();
+  // Each logical collection gets its own monotonic counter so numeric ids stay
+  // stable across inserts without relying on Mongo ObjectIds in the UI.
   const result = await counters.findOneAndUpdate(
     { _id: name },
     { $inc: { value: 1 } },
@@ -233,6 +240,8 @@ async function cleanupInvalidIds() {
   ];
 
   for (const collection of targetCollections) {
+    // Older seed data may contain malformed ids; removing those rows prevents
+    // counters, filters, and route lookups from breaking later on.
     const docs = await collection.find({}, { projection: { _id: 1, id: 1 } }).toArray();
     const badIds = docs.filter((doc) => Number.isNaN(doc.id)).map((doc) => doc._id);
     if (badIds.length) {
@@ -303,6 +312,7 @@ async function seedDatabase() {
   const { exercises, submissions, reviewComments, progressComments, users } = collections();
   if (await exercises.countDocuments()) return;
 
+  // Seed once so a fresh database immediately has realistic teacher/student data.
   const exerciseOneId = await nextId("exercises");
   const exerciseTwoId = await nextId("exercises");
   const exerciseOneCreated = new Date(Date.now() - 1000 * 60 * 60 * 24 * 3);
