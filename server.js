@@ -494,6 +494,7 @@ async function readState(viewer = null) {
 app.get("/api/state", async (req, res) => {
   try {
     const viewer = await authenticatedUserFromRequest(req);
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
     res.json(await readState(viewer));
   } catch (error) {
     res.status(500).json({ error: "Could not load database state.", details: error.message });
@@ -624,14 +625,20 @@ app.patch("/api/submissions/:id/review", async (req, res) => {
     const submission = await submissions.findOne({ id: submissionId });
     if (!submission) return res.status(404).json({ error: "Submission not found." });
 
-    await submissions.updateOne({ id: submissionId }, { $set: { status } });
+    const scoreValue = Number.isFinite(scoreOverride) ? scoreOverride : null;
+    const updatePayload = { status };
+    if (scoreValue != null) {
+      updatePayload.score = scoreValue;
+    }
+
+    await submissions.updateOne({ id: submissionId }, { $set: updatePayload });
     await reviewComments.insertOne({
       id: await nextId("review_comments"),
       submissionId,
       instructorName,
       status,
       comment,
-      scoreOverride: Number.isFinite(scoreOverride) ? scoreOverride : null,
+      scoreOverride: scoreValue,
       createdAt: new Date()
     });
     await logActivity({
@@ -641,7 +648,7 @@ app.patch("/api/submissions/:id/review", async (req, res) => {
       entityType: "submission",
       entityId: submissionId,
       description: `Submission ${submissionId} reviewed with status ${status}`,
-      metadata: { status, scoreOverride: Number.isFinite(scoreOverride) ? scoreOverride : null }
+      metadata: { status, scoreOverride: scoreValue }
     });
     await createNotification({
       recipientEmail: submission.studentEmail,

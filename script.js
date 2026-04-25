@@ -29,6 +29,7 @@
   let state = { exercises: [], submissions: [], progressComments: [], progressCommentReads: [] };
   let sortMode = "newest";
   let pendingReadMark = false;
+  let statePollId = null;
 
   function currentRole() {
     return normalizeRole(localStorage.getItem("codetrack_user_role") || "");
@@ -59,6 +60,7 @@
     const email = currentEmail();
     const role = currentRole();
     const response = await fetch(`${API_BASE}${path}`, {
+      cache: "no-store",
       headers: {
         "Content-Type": "application/json",
         ...(email ? { "X-CodeTrack-Email": email } : {}),
@@ -803,10 +805,33 @@
     renderProgressBadge();
   }
 
+  function startStatePolling() {
+    if (!currentRole()) return;
+    if (statePollId) return;
+
+    statePollId = window.setInterval(async () => {
+      try {
+        await fetchState();
+        renderAll();
+      } catch (_error) {
+        // Polling failures should not interrupt the user.
+      }
+    }, 5000);
+  }
+
   async function init() {
     try {
       await fetchState();
       renderAll();
+      startStatePolling();
+      window.addEventListener("focus", async () => {
+        try {
+          await fetchState();
+          renderAll();
+        } catch (_error) {
+          // Ignore focus refresh failures.
+        }
+      });
     } catch (error) {
       toast(`Could not load platform data: ${error.message}`, true);
     }
