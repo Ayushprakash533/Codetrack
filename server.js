@@ -420,8 +420,6 @@ async function readState(viewer = null) {
       language: row.language,
       difficulty: row.difficulty,
       prompt: row.prompt,
-      link: row.link || "",
-      tags: Array.isArray(row.tags) ? row.tags : [],
       createdAt: toTimestamp(row.createdAt)
     })),
     submissions: visibleSubmissionRows.map((row) => {
@@ -508,8 +506,6 @@ app.post("/api/exercises", async (req, res) => {
   const language = String(req.body.language || "").trim();
   const difficulty = String(req.body.difficulty || "").trim();
   const prompt = String(req.body.prompt || "").trim();
-  const link = String(req.body.link || "").trim();
-  const tags = Array.isArray(req.body.tags) ? req.body.tags.map((tag) => String(tag).trim()).filter(Boolean) : [];
 
   if (!title || !language || !difficulty || !prompt) {
     return res.status(400).json({ error: "Title, language, difficulty, and prompt are required." });
@@ -523,8 +519,6 @@ app.post("/api/exercises", async (req, res) => {
       language,
       difficulty,
       prompt,
-      link,
-      tags,
       createdAt: new Date()
     };
     await exercises.insertOne(exercise);

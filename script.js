@@ -254,23 +254,16 @@
           const submissions = state.submissions.filter((submission) => sameId(submission.exerciseId, exercise.id));
           const pending = submissions.filter((submission) => submission.status === "submitted").length;
           const approved = submissions.filter((submission) => submission.status === "approved").length;
-          const tags = (exercise.tags || []).map((tag) => `<span class="tag">${escapeHTML(tag)}</span>`).join("");
 
           return `<article class="card compact">
             <div class="card-row">
               <div>
                 <h3>${escapeHTML(exercise.title)}</h3>
                 <p class="muted">${escapeHTML(exercise.prompt)}</p>
-                <div class="tags">${tags}</div>
               </div>
               <div class="meta-block">
                 <div class="pill ghost">${escapeHTML(exercise.language)}</div>
                 <div class="pill ghost">${escapeHTML(exercise.difficulty)}</div>
-                ${
-                  exercise.link
-                    ? `<a class="pill ghost" href="${escapeHTML(exercise.link)}" target="_blank" rel="noopener">Starter link</a>`
-                    : ""
-                }
               </div>
             </div>
             <div class="meta-row">
@@ -593,12 +586,7 @@
       title: String(formData.get("title") || "").trim(),
       language: String(formData.get("language") || "").trim(),
       difficulty: String(formData.get("difficulty") || "").trim(),
-      prompt: String(formData.get("prompt") || "").trim(),
-      link: String(formData.get("link") || "").trim(),
-      tags: String(formData.get("tags") || "")
-        .split(",")
-        .map((tag) => tag.trim())
-        .filter(Boolean)
+      prompt: String(formData.get("prompt") || "").trim()
     };
 
     try {
