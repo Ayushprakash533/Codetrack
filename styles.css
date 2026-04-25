@@ -2296,19 +2296,9 @@ summary::-webkit-details-marker {
 
 #reviewDesk {
   display: flex;
-  flex-direction: row;
-  align-items: stretch;
-  gap: 22px;
+  flex-direction: column;
   height: min(80vh, 940px);
   overflow: hidden;
-}
-
-.review-desk-sidebar {
-  flex: 0 0 280px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding-right: 4px;
 }
 
 #reviewDesk .section-head {
@@ -2316,14 +2306,8 @@ summary::-webkit-details-marker {
   top: 0;
   z-index: 1;
   background: var(--card-strong);
-  padding-bottom: 0;
+  padding-bottom: 10px;
   flex: 0 0 auto;
-}
-
-#reviewDesk .chip-row {
-  display: grid;
-  gap: 12px;
-  align-content: start;
 }
 
 #submissionList {
@@ -2674,15 +2658,9 @@ summary::-webkit-details-marker {
   }
 
   #reviewDesk {
-    flex-direction: column;
     height: auto;
     max-height: none;
     overflow: visible;
-  }
-
-  .review-desk-sidebar {
-    flex: 1 1 auto;
-    padding-right: 0;
   }
 
   #reviewDesk .section-head {
