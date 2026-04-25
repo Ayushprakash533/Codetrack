@@ -545,10 +545,9 @@ app.post("/api/submissions", async (req, res) => {
   const studentEmail = actor.email;
   const code = String(req.body.code || "").trim();
   const notes = String(req.body.notes || "").trim();
-  const outcome = String(req.body.outcome || "").trim();
 
-  if (!exerciseId || !studentName || !studentEmail || !code || !outcome) {
-    return res.status(400).json({ error: "Exercise, student details, code, and outcome are required." });
+  if (!exerciseId || !studentName || !studentEmail || !code) {
+    return res.status(400).json({ error: "Exercise, student details, and code are required." });
   }
 
   try {
@@ -564,7 +563,6 @@ app.post("/api/submissions", async (req, res) => {
       studentEmail,
       code,
       notes,
-      outcome,
       attempt,
       score: null, // Score will be set by teacher review
       status: "submitted",
@@ -579,7 +577,7 @@ app.post("/api/submissions", async (req, res) => {
       entityType: "submission",
       entityId: submission.id,
       description: `${studentName} submitted attempt ${attempt}`,
-      metadata: { exerciseId, outcome, attempt }
+      metadata: { exerciseId, attempt }
     });
     await createNotification({
       recipientRole: "pro",

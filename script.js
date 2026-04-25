@@ -622,8 +622,7 @@
       studentName: String(formData.get("studentName") || "").trim(),
       studentEmail: currentEmail() || String(formData.get("studentEmail") || "").trim().toLowerCase(),
       code: String(formData.get("code") || "").trim(),
-      notes: String(formData.get("notes") || "").trim(),
-      outcome: String(formData.get("outcome") || "").trim()
+      notes: String(formData.get("notes") || "").trim()
     };
 
     try {
