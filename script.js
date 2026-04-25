@@ -181,7 +181,11 @@
       return;
     }
 
-    uniqueEmails.forEach((email) => {
+    const loggedInEmail = currentEmail();
+    const isStudent = currentRole() === "user";
+    const filteredEmails = isStudent && loggedInEmail ? uniqueEmails.filter(email => email === loggedInEmail) : uniqueEmails;
+
+    filteredEmails.forEach((email) => {
       const option = document.createElement("option");
       option.value = email;
       const name = state.submissions.find((submission) => submission.studentEmail === email)?.studentName || email;
@@ -189,8 +193,7 @@
       select.appendChild(option);
     });
 
-    const loggedInEmail = currentEmail();
-    if (currentRole() === "user" && loggedInEmail && [...select.options].some((option) => option.value === loggedInEmail)) {
+    if (isStudent && loggedInEmail && [...select.options].some((option) => option.value === loggedInEmail)) {
       select.value = loggedInEmail;
       select.disabled = true;
     } else {
@@ -361,7 +364,7 @@
             </div>
             <div class="meta-block right">
               <span class="pill ghost">${escapeHTML(exercise?.language || "")}</span>
-              <span class="pill ghost">Score ${submission.score}</span>
+              ${submission.score != null ? `<span class="pill ghost">Score ${submission.score}</span>` : ""}
               ${delta ? `<span class="pill ${delta > 0 ? "success" : "warn"}">${delta > 0 ? "+" : ""}${delta} vs prev</span>` : ""}
             </div>
           </div>
@@ -376,6 +379,10 @@
                 <option value="approved" ${submission.status === "approved" ? "selected" : ""}>Approved</option>
                 <option value="changes" ${submission.status === "changes" ? "selected" : ""}>Changes requested</option>
               </select>
+            </label>
+            <label>
+              <span>Score (0-100)</span>
+              <input type="number" min="0" max="100" data-action="score" data-id="${submission.id}" value="${submission.score || ""}" placeholder="Enter score">
             </label>
             <label class="grow">
               <span>Instructor comment</span>
@@ -414,9 +421,10 @@
       submissions = submissions.filter((submission) => sameId(submission.exerciseId, exerciseFilter));
     }
     submissions.sort((a, b) => a.createdAt - b.createdAt);
+    submissions = submissions.filter((submission) => submission.score != null); // Only show scored submissions
 
     if (!submissions.length) {
-      summary.textContent = "No attempts match this selection yet.";
+      summary.textContent = "No scored attempts match this selection yet.";
       highlights.innerHTML = "";
       timeline.innerHTML = "";
       if (commentList) commentList.innerHTML = "";
@@ -657,11 +665,13 @@
 
     const status = card.querySelector("select[data-action='status']")?.value || "submitted";
     const comment = card.querySelector("textarea[data-action='comment']")?.value || "";
+    const scoreInput = card.querySelector("input[data-action='score']");
+    const scoreOverride = scoreInput && scoreInput.value !== "" ? Number(scoreInput.value) : null;
 
     try {
       await api(`/submissions/${id}/review`, {
         method: "PATCH",
-        body: JSON.stringify({ status, comment })
+        body: JSON.stringify({ status, comment, scoreOverride })
       });
       await fetchState();
       renderAll();

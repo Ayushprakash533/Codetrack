@@ -102,6 +102,7 @@ function updateRoleNav() {
   const logoutButtons = document.querySelectorAll("[data-logout]");
   const roleBadges = document.querySelectorAll("[data-role-badge]");
   const guestOnly = document.querySelectorAll("[data-guest-only]");
+  const loggedInOnly = document.querySelectorAll("[data-logged-in-only]");
   const teacherOnly = document.querySelectorAll("[data-role-only='pro']");
   const studentOnly = document.querySelectorAll("[data-role-only='user']");
   const studentViewHiddenForTeacher = document.querySelectorAll("[data-hide-for-role='pro']");
@@ -109,6 +110,7 @@ function updateRoleNav() {
 
   loginMenus.forEach((el) => el.classList.toggle("hidden", loggedIn));
   guestOnly.forEach((el) => el.classList.toggle("hidden", loggedIn));
+  loggedInOnly.forEach((el) => el.classList.toggle("hidden", !loggedIn));
   logoutButtons.forEach((btn) => {
     btn.classList.toggle("hidden", !loggedIn);
     btn.textContent = loggedIn ? `Logout${currentUserName() ? ` · ${currentUserName()}` : ""}` : "Logout";

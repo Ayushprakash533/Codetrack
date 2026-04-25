@@ -309,118 +309,9 @@ async function initDatabase() {
 }
 
 async function seedDatabase() {
-  const { exercises, submissions, reviewComments, progressComments, users } = collections();
-  if (await exercises.countDocuments()) return;
-
-  // Seed once so a fresh database immediately has realistic teacher/student data.
-  const exerciseOneId = await nextId("exercises");
-  const exerciseTwoId = await nextId("exercises");
-  const exerciseOneCreated = new Date(Date.now() - 1000 * 60 * 60 * 24 * 3);
-  const exerciseTwoCreated = new Date(Date.now() - 1000 * 60 * 60 * 24 * 2);
-
-  await exercises.insertMany([
-    {
-      id: exerciseOneId,
-      title: "Print hello world",
-      language: "C",
-      difficulty: "Easy",
-      prompt: "Write a basic C program that prints Hello, World! to the screen.",
-      link: "",
-      tags: ["output", "syntax", "basics"],
-      createdAt: exerciseOneCreated
-    },
-    {
-      id: exerciseTwoId,
-      title: "Find the largest of two numbers",
-      language: "Java",
-      difficulty: "Easy",
-      prompt: "Write a Java program that compares two numbers and prints the larger one.",
-      link: "",
-      tags: ["comparison", "numbers", "basics"],
-      createdAt: exerciseTwoCreated
-    }
-  ]);
-
-  const firstCode = "#include <stdio.h>\n\nint main() {\n    printf(\"Hello, World!\\n\");\n    return 0;\n}";
-  const secondCode = "#include <stdio.h>\n\nint main() {\n    printf(\"Hello, World!\\n\");\n    return 0;\n}";
-  const thirdCode = "public class Main {\n    public static void main(String[] args) {\n        int a = 10;\n        int b = 20;\n\n        if (a > b) {\n            System.out.println(a);\n        } else {\n            System.out.println(b);\n        }\n    }\n}";
-
-  const firstSubmissionId = await nextId("submissions");
-  const secondSubmissionId = await nextId("submissions");
-  const thirdSubmissionId = await nextId("submissions");
-
-  await submissions.insertMany([
-    {
-      id: firstSubmissionId,
-      exerciseId: exerciseOneId,
-      studentName: "Maya Sharma",
-      studentEmail: "maya@example.com",
-      code: firstCode,
-      notes: "Basic C program to print the message.",
-      outcome: "partial",
-      attempt: 1,
-      score: calcScore("partial", firstCode, "Basic C program to print the message."),
-      status: "submitted",
-      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 21)
-    },
-    {
-      id: secondSubmissionId,
-      exerciseId: exerciseOneId,
-      studentName: "Maya Sharma",
-      studentEmail: "maya@example.com",
-      code: secondCode,
-      notes: "Clean version with correct output and return statement.",
-      outcome: "passed",
-      attempt: 2,
-      score: calcScore("passed", secondCode, "Clean version with correct output and return statement."),
-      status: "approved",
-      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 6)
-    },
-    {
-      id: thirdSubmissionId,
-      exerciseId: exerciseTwoId,
-      studentName: "Adil Khan",
-      studentEmail: "adil@example.com",
-      code: thirdCode,
-      notes: "Used an if-else statement to print the larger number.",
-      outcome: "failing",
-      attempt: 1,
-      score: calcScore("failing", thirdCode, "Used an if-else statement to print the larger number."),
-      status: "submitted",
-      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 8)
-    }
-  ]);
-
-  await reviewComments.insertOne({
-    id: await nextId("review_comments"),
-    submissionId: secondSubmissionId,
-    instructorName: "Priya",
-    status: "approved",
-    comment: "Good work. The program is simple and prints the expected output.",
-    scoreOverride: 93,
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 5)
-  });
-
-  await progressComments.insertOne({
-    id: await nextId("progress_comments"),
-    studentEmail: "maya@example.com",
-    exerciseId: exerciseOneId,
-    authorRole: "pro",
-    authorName: "Priya",
-    comment: "You are improving well across attempts. Keep tightening your edge-case coverage and test naming.",
-    editedAt: null,
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 4)
-  });
-
-  await users.insertOne({
-    id: await nextId("users"),
-    email: "teacher@example.com",
-    password: "teacher123",
-    role: "pro",
-    fullName: "Priya Instructor",
-    lastLoginAt: null,
-    createdAt: new Date()
-  });
+  // Leave the exercise collections empty on startup so teachers control
+  // when exercises first appear in both the UI and the database.
+  return;
 }
 
 async function ensureDefaultAccounts() {
@@ -680,7 +571,7 @@ app.post("/api/submissions", async (req, res) => {
       notes,
       outcome,
       attempt,
-      score: calcScore(outcome, code, notes),
+      score: null, // Score will be set by teacher review
       status: "submitted",
       createdAt: new Date()
     };
