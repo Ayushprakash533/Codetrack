@@ -16,8 +16,8 @@ const API_BASE = (() => {
 const TEACHER_ROLE = "pro";
 const STUDENT_ROLE = "user";
 const DEFAULT_REDIRECTS = {
-  user: "submissions.html",
-  pro: "exercises.html"
+  user: "index.html",
+  pro: "index.html"
 };
 let activeCaptchaAnswer = null;
 
