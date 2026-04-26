@@ -213,7 +213,7 @@
     const queueMeta = $("queueMeta");
     if (!queueList || !queueMeta) return;
     const pending = state.submissions
-      .filter((submission) => submission.status === "submitted")
+      .filter((submission) => !Array.isArray(submission.reviews) || submission.reviews.length === 0)
       .sort((a, b) => b.createdAt - a.createdAt)
       .slice(0, 4);
 
@@ -253,8 +253,8 @@
       sorted
         .map((exercise) => {
           const submissions = state.submissions.filter((submission) => sameId(submission.exerciseId, exercise.id));
-          const pending = submissions.filter((submission) => submission.status === "submitted").length;
-          const approved = submissions.filter((submission) => submission.status === "approved").length;
+          const pendingFeedback = submissions.filter((submission) => !Array.isArray(submission.reviews) || submission.reviews.length === 0).length;
+          const reviewed = submissions.filter((submission) => Array.isArray(submission.reviews) && submission.reviews.length > 0).length;
 
           return `<article class="card compact">
             <div class="card-row">
@@ -269,8 +269,8 @@
             </div>
             <div class="meta-row">
               <span>${submissions.length} submissions</span>
-              <span>${pending} pending</span>
-              <span>${approved} approved</span>
+              <span>${pendingFeedback} awaiting feedback</span>
+              <span>${reviewed} reviewed</span>
               <span>${fmtDate(exercise.createdAt)}</span>
             </div>
           </article>`;
@@ -294,26 +294,16 @@
     return submission.score - previous.score;
   }
 
-  function statusLabel(status) {
-    return status === "approved" ? "Approved" : status === "changes" ? "Changes requested" : "Needs review";
-  }
-
-  function statusClass(status) {
-    return status === "approved" ? "success" : status === "changes" ? "warn" : "info";
-  }
-
   function getReviewDraft(submission) {
     const draft = reviewDrafts.get(String(submission.id));
     if (!draft) {
       return {
-        status: submission.status,
         score: submission.score ?? "",
         comment: submission.latestComment || ""
       };
     }
 
     return {
-      status: draft.status ?? submission.status,
       score: draft.score ?? (submission.score ?? ""),
       comment: draft.comment ?? (submission.latestComment || "")
     };
@@ -341,10 +331,10 @@
       .map(
         (review) => `<div class="review-note">
           <div class="meta-row space">
-            <strong>${statusLabel(review.status)}</strong>
+            <strong>Instructor feedback</strong>
             <span class="muted">${fmtDate(review.createdAt)}</span>
           </div>
-          <p>${escapeHTML(review.comment || "Status updated without written feedback.")}</p>
+          <p>${escapeHTML(review.comment || "Feedback saved without a written comment.")}</p>
         </div>`
       )
       .join("")}</div>`;
@@ -353,17 +343,12 @@
   function renderSubmissions() {
     const container = $("submissionList");
     const exerciseFilterControl = $("reviewExerciseFilter");
-    const statusFilterControl = $("reviewStatusFilter");
-    if (!container || !exerciseFilterControl || !statusFilterControl) return;
+    if (!container || !exerciseFilterControl) return;
     const exerciseFilter = exerciseFilterControl.value;
-    const statusFilter = statusFilterControl.value;
 
     let submissions = [...state.submissions];
     if (exerciseFilter && exerciseFilter !== "all") {
       submissions = submissions.filter((submission) => sameId(submission.exerciseId, exerciseFilter));
-    }
-    if (statusFilter !== "all") {
-      submissions = submissions.filter((submission) => submission.status === statusFilter);
     }
 
     submissions.sort((a, b) => b.createdAt - a.createdAt);
@@ -382,10 +367,7 @@
         return `<article class="card compact submission" id="card-${submission.id}">
           <div class="card-row">
             <div>
-              <div class="meta-row space">
-                <strong>${escapeHTML(submission.studentName)}</strong>
-                <span class="pill ${statusClass(submission.status)}">${statusLabel(submission.status)}</span>
-              </div>
+              <strong>${escapeHTML(submission.studentName)}</strong>
               <p class="muted">${escapeHTML(exercise ? exercise.title : "Exercise")} • Attempt ${submission.attempt} • ${fmtDate(submission.createdAt)}</p>
             </div>
             <div class="meta-block right">
@@ -398,14 +380,6 @@
           <p class="muted">Student notes: ${escapeHTML(submission.notes || "None")}</p>
           ${renderReviewHistory(submission)}
           <div class="feedback-row">
-            <label>
-              <span>Status</span>
-              <select data-action="status" data-id="${submission.id}">
-                <option value="submitted" ${draft.status === "submitted" ? "selected" : ""}>Needs review</option>
-                <option value="approved" ${draft.status === "approved" ? "selected" : ""}>Approved</option>
-                <option value="changes" ${draft.status === "changes" ? "selected" : ""}>Changes requested</option>
-              </select>
-            </label>
             <label>
               <span>Score (0-100)</span>
               <input type="number" min="0" max="100" data-action="score" data-id="${submission.id}" value="${draft.score}" placeholder="Enter score">
@@ -424,7 +398,7 @@
   function handleReviewDraftInput(event) {
     const field = event.target.dataset.action;
     const id = event.target.dataset.id;
-    if (!field || !id || !["status", "score", "comment"].includes(field)) return;
+    if (!field || !id || !["score", "comment"].includes(field)) return;
     setReviewDraftValue(id, field, event.target.value);
   }
 
@@ -470,7 +444,7 @@
     const bestScore = Math.max(...submissions.map((submission) => submission.score));
     const avgScore = Math.round(submissions.reduce((sum, submission) => sum + submission.score, 0) / submissions.length);
     const delta = lastScore - firstScore;
-    const approvedCount = submissions.filter((submission) => submission.status === "approved").length;
+    const reviewedCount = submissions.filter((submission) => Array.isArray(submission.reviews) && submission.reviews.length > 0).length;
     const performanceLabel =
       avgScore >= 90 ? "Excellent" :
       avgScore >= 75 ? "Strong" :
@@ -488,8 +462,8 @@
         <span>Best score</span>
       </div>
       <div class="stat">
-        <strong>${approvedCount}</strong>
-        <span>Approved attempts</span>
+        <strong>${reviewedCount}</strong>
+        <span>Reviewed attempts</span>
       </div>
       <div class="stat">
         <strong>${performanceLabel}</strong>
@@ -514,10 +488,7 @@
           return `<div class="timeline-item">
             <div class="timeline-badge">${submission.attempt}</div>
             <div class="timeline-body">
-              <div class="meta-row space">
-                <strong>${escapeHTML(exercise ? exercise.title : "Exercise")}</strong>
-                <span class="pill ${statusClass(submission.status)}">${statusLabel(submission.status)}</span>
-              </div>
+              <strong>${escapeHTML(exercise ? exercise.title : "Exercise")}</strong>
               <p class="muted">${fmtDate(submission.createdAt)} • Score ${submission.score}${deltaLabel ? ` (${deltaLabel > 0 ? "+" : ""}${deltaLabel} vs prev)` : ""}</p>
               <p>${escapeHTML(latestReview?.comment || submission.notes || "Submission saved.")}</p>
             </div>
@@ -690,7 +661,6 @@
     const card = document.querySelector(`#card-${id}`);
     if (!card) return;
 
-    const status = card.querySelector("select[data-action='status']")?.value || "submitted";
     const comment = card.querySelector("textarea[data-action='comment']")?.value || "";
     const scoreInput = card.querySelector("input[data-action='score']");
     const scoreOverride = scoreInput && scoreInput.value !== "" ? Number(scoreInput.value) : null;
@@ -698,7 +668,7 @@
     try {
       await api(`/submissions/${id}/review`, {
         method: "PATCH",
-        body: JSON.stringify({ status, comment, scoreOverride })
+        body: JSON.stringify({ comment, scoreOverride })
       });
       clearReviewDraft(id);
       await fetchState();
@@ -869,7 +839,6 @@
     $("submissionList")?.addEventListener("change", handleReviewDraftInput);
     $("queueList")?.addEventListener("click", handleQueueJump);
     $("reviewExerciseFilter")?.addEventListener("change", renderSubmissions);
-    $("reviewStatusFilter")?.addEventListener("change", renderSubmissions);
     $("progressStudent")?.addEventListener("change", renderProgress);
     $("progressExercise")?.addEventListener("change", renderProgress);
     $("progressCommentForm")?.addEventListener("submit", handleProgressCommentSubmit);

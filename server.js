@@ -394,7 +394,6 @@ async function readState(viewer = null) {
     const review = {
       id: row.id,
       instructorName: row.instructorName,
-      status: row.status,
       comment: row.comment,
       scoreOverride: row.scoreOverride ?? null,
       createdAt: toTimestamp(row.createdAt)
@@ -423,7 +422,6 @@ async function readState(viewer = null) {
         studentEmail: row.studentEmail,
         code: row.code,
         notes: row.notes || "",
-        status: row.status,
         attempt: row.attempt,
         score: latestReview?.scoreOverride ?? row.score,
         latestComment: latestReview?.comment || "",
@@ -555,7 +553,6 @@ app.post("/api/submissions", async (req, res) => {
       notes,
       attempt,
       score: null, // Score will be set by teacher review
-      status: "submitted",
       createdAt: new Date()
     };
 
@@ -592,13 +589,11 @@ app.patch("/api/submissions/:id/review", async (req, res) => {
   const actor = await requireRole(req, res, TEACHER_ROLE);
   if (!actor) return;
   const submissionId = Number(req.params.id);
-  const status = String(req.body.status || "").trim();
   const comment = String(req.body.comment || "").trim();
   const instructorName = String(req.body.instructorName || actor.fullName || "Instructor").trim() || "Instructor";
   const scoreOverride = req.body.scoreOverride == null || req.body.scoreOverride === "" ? null : Number(req.body.scoreOverride);
-  const allowedStatuses = new Set(["submitted", "approved", "changes"]);
 
-  if (!submissionId || !allowedStatuses.has(status)) {
+  if (!submissionId) {
     return res.status(400).json({ error: "Invalid review update." });
   }
 
@@ -608,17 +603,18 @@ app.patch("/api/submissions/:id/review", async (req, res) => {
     if (!submission) return res.status(404).json({ error: "Submission not found." });
 
     const scoreValue = Number.isFinite(scoreOverride) ? scoreOverride : null;
-    const updatePayload = { status };
+    const updatePayload = {};
     if (scoreValue != null) {
       updatePayload.score = scoreValue;
     }
 
-    await submissions.updateOne({ id: submissionId }, { $set: updatePayload });
+    if (Object.keys(updatePayload).length) {
+      await submissions.updateOne({ id: submissionId }, { $set: updatePayload });
+    }
     await reviewComments.insertOne({
       id: await nextId("review_comments"),
       submissionId,
       instructorName,
-      status,
       comment,
       scoreOverride: scoreValue,
       createdAt: new Date()
@@ -629,15 +625,15 @@ app.patch("/api/submissions/:id/review", async (req, res) => {
       action: "submission_reviewed",
       entityType: "submission",
       entityId: submissionId,
-      description: `Submission ${submissionId} reviewed with status ${status}`,
-      metadata: { status, scoreOverride: scoreValue }
+      description: `Submission ${submissionId} reviewed`,
+      metadata: { scoreOverride: scoreValue }
     });
     await createNotification({
       recipientEmail: submission.studentEmail,
       recipientRole: "user",
       kind: "review",
       title: "Your submission was reviewed",
-      message: `A teacher left feedback on attempt ${submission.attempt} with status "${status}".`,
+      message: `A teacher left feedback on attempt ${submission.attempt}.`,
       relatedType: "submission",
       relatedId: submissionId
     });
