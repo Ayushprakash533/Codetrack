@@ -2323,8 +2323,9 @@ summary::-webkit-details-marker {
 
 #reviewDesk .section-head h2 {
   margin-bottom: 0;
-  font-size: clamp(42px, 5vw, 62px);
-  line-height: 0.98;
+  font-size: clamp(26px, 3vw, 32px);
+  line-height: 1.05;
+  letter-spacing: -0.04em;
 }
 
 #reviewDesk .chip-row {
