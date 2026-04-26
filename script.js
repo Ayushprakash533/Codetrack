@@ -506,6 +506,7 @@
 
     const role = currentRole();
     const loggedIn = Boolean(currentEmail());
+    const loggedInEmail = currentEmail();
     const selectedExerciseId = exerciseFilter && exerciseFilter !== "all" ? Number(exerciseFilter) : null;
     const canManageTeacherComments = role === "pro";
     // A separate read-tracking collection lets the UI show "New" markers
@@ -524,7 +525,12 @@
     commentList.innerHTML = comments.length
       ? comments
           .sort((a, b) => a.createdAt - b.createdAt)
-          .map((comment) => `
+          .map((comment) => {
+            const canManageComment =
+              (canManageTeacherComments && comment.authorRole === "pro") ||
+              (role === "user" && comment.authorRole === "user" && comment.studentEmail === loggedInEmail);
+
+            return `
             <div class="discussion-item ${comment.authorRole === "pro" ? "teacher" : "student"}">
               <div class="meta-row space">
                 <strong>${escapeHTML(comment.authorName || (comment.authorRole === "pro" ? "Teacher" : "Student"))}</strong>
@@ -533,7 +539,7 @@
               <p class="muted">${fmtDate(comment.createdAt)}${comment.editedAt ? ` • Edited ${fmtDate(comment.editedAt)}` : ""}${comment.authorRole === "pro" && !readIds.has(comment.id) && currentRole() === "user" ? " • New" : ""}</p>
               <p>${escapeHTML(comment.comment)}</p>
               ${
-                canManageTeacherComments && comment.authorRole === "pro"
+                canManageComment
                   ? `<div class="discussion-actions">
                       <button class="comment-link" type="button" data-comment-action="edit" data-comment-id="${comment.id}">Edit</button>
                       <button class="comment-link" type="button" data-comment-action="delete" data-comment-id="${comment.id}">Delete</button>
@@ -541,7 +547,8 @@
                   : ""
               }
             </div>
-          `)
+          `;
+          })
           .join("")
       : '<div class="empty">No discussion yet for this student and exercise selection.</div>';
 
@@ -732,10 +739,17 @@
     if (!commentId) return;
 
     if (action === "edit") {
-      if (currentRole() !== "pro") return;
       const comment = (state.progressComments || []).find((item) => item.id === commentId);
       if (!comment) return;
-      const nextText = window.prompt("Edit teacher comment", comment.comment);
+      const canEdit =
+        (currentRole() === "pro" && comment.authorRole === "pro") ||
+        (currentRole() === "user" && comment.authorRole === "user" && comment.studentEmail === currentEmail());
+      if (!canEdit) return;
+
+      const nextText = window.prompt(
+        comment.authorRole === "pro" ? "Edit teacher comment" : "Edit your comment",
+        comment.comment
+      );
       if (nextText == null) return;
       const trimmed = nextText.trim();
       if (!trimmed) {
@@ -756,8 +770,14 @@
     }
 
     if (action === "delete") {
-      if (currentRole() !== "pro") return;
-      if (!window.confirm("Delete this teacher comment?")) return;
+      const comment = (state.progressComments || []).find((item) => item.id === commentId);
+      if (!comment) return;
+      const canDelete =
+        (currentRole() === "pro" && comment.authorRole === "pro") ||
+        (currentRole() === "user" && comment.authorRole === "user" && comment.studentEmail === currentEmail());
+      if (!canDelete) return;
+
+      if (!window.confirm(comment.authorRole === "pro" ? "Delete this teacher comment?" : "Delete your comment?")) return;
       try {
         await api(`/progress-comments/${commentId}?authorRole=${encodeURIComponent(currentRole())}`, {
           method: "DELETE",
