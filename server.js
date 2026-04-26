@@ -241,6 +241,23 @@ async function cleanupInvalidIds() {
   }
 }
 
+async function cleanupLegacyReviewStatus() {
+  const { submissions, reviewComments } = collections();
+
+  // Older documents stored a review status field that is no longer part of
+  // the product model. Remove it so persisted data matches the current UI/API.
+  await Promise.all([
+    submissions.updateMany(
+      { status: { $exists: true } },
+      { $unset: { status: "" } }
+    ),
+    reviewComments.updateMany(
+      { status: { $exists: true } },
+      { $unset: { status: "" } }
+    )
+  ]);
+}
+
 async function initDatabase() {
   if (db) return db;
   if (!MONGODB_URI) {
@@ -294,6 +311,7 @@ async function initDatabase() {
   ]);
 
   await cleanupInvalidIds();
+  await cleanupLegacyReviewStatus();
   await seedDatabase();
   await ensureDefaultAccounts();
   return db;
