@@ -427,31 +427,31 @@
     if (exerciseFilter && exerciseFilter !== "all") {
       submissions = submissions.filter((submission) => sameId(submission.exerciseId, exerciseFilter));
     }
-    submissions.sort((a, b) => a.createdAt - b.createdAt);
-    submissions = submissions.filter((submission) => submission.score != null); // Only show scored submissions
+    renderProgressComments(student, exerciseFilter);
 
-    if (!submissions.length) {
+    submissions.sort((a, b) => a.createdAt - b.createdAt);
+    const scoredSubmissions = submissions.filter((submission) => submission.score != null); // Only scored attempts belong in the chart and summary
+
+    if (!scoredSubmissions.length) {
       summary.textContent = "No scored attempts match this selection yet.";
       highlights.innerHTML = "";
       timeline.innerHTML = "";
-      if (commentList) commentList.innerHTML = "";
-      if (commentForm) commentForm.classList.add("hidden");
       return;
     }
 
-    const firstScore = submissions[0].score;
-    const lastScore = submissions[submissions.length - 1].score;
-    const bestScore = Math.max(...submissions.map((submission) => submission.score));
-    const avgScore = Math.round(submissions.reduce((sum, submission) => sum + submission.score, 0) / submissions.length);
+    const firstScore = scoredSubmissions[0].score;
+    const lastScore = scoredSubmissions[scoredSubmissions.length - 1].score;
+    const bestScore = Math.max(...scoredSubmissions.map((submission) => submission.score));
+    const avgScore = Math.round(scoredSubmissions.reduce((sum, submission) => sum + submission.score, 0) / scoredSubmissions.length);
     const delta = lastScore - firstScore;
-    const reviewedCount = submissions.filter((submission) => Array.isArray(submission.reviews) && submission.reviews.length > 0).length;
+    const reviewedCount = scoredSubmissions.filter((submission) => Array.isArray(submission.reviews) && submission.reviews.length > 0).length;
     const performanceLabel =
       avgScore >= 90 ? "Excellent" :
       avgScore >= 75 ? "Strong" :
       avgScore >= 60 ? "Improving" :
       "Needs support";
 
-    summary.textContent = `${submissions.length} attempts • Avg score ${avgScore} • ${delta >= 0 ? "+" : ""}${delta} since first attempt`;
+    summary.textContent = `${scoredSubmissions.length} attempts • Avg score ${avgScore} • ${delta >= 0 ? "+" : ""}${delta} since first attempt`;
     highlights.innerHTML = `
       <div class="stat">
         <strong>${lastScore}</strong>
@@ -471,13 +471,13 @@
       </div>
     `;
 
-    const sparkline = submissions
+    const sparkline = scoredSubmissions
       .map((submission) => `<div class="spark" style="height:${32 + submission.score / 2}px" title="Attempt ${submission.attempt}: ${submission.score}"></div>`)
       .join("");
 
     timeline.innerHTML =
       `<div class="sparkline">${sparkline}</div>` +
-      submissions
+      scoredSubmissions
         .map((submission) => {
           const exercise = state.exercises.find((item) => sameId(item.id, submission.exerciseId));
           const deltaLabel = calcDelta(submission);
@@ -496,7 +496,6 @@
         })
         .join("");
 
-    renderProgressComments(student, exerciseFilter);
   }
 
   function renderProgressComments(studentEmail, exerciseFilter) {
@@ -520,7 +519,7 @@
     let comments = (state.progressComments || []).filter((comment) => comment.studentEmail === studentEmail);
     comments = selectedExerciseId === null
       ? comments
-      : comments.filter((comment) => Number(comment.exerciseId) === selectedExerciseId);
+      : comments.filter((comment) => comment.exerciseId == null || Number(comment.exerciseId) === selectedExerciseId);
 
     commentList.innerHTML = comments.length
       ? comments
