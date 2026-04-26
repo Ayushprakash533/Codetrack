@@ -2299,11 +2299,15 @@ summary::-webkit-details-marker {
   flex-direction: column;
   gap: 20px;
   width: 100%;
-  height: 820px;
-  max-height: 820px;
+  height: 860px;
+  max-height: 860px;
   padding: 28px 32px 28px;
   border-radius: 18px;
   overflow: hidden;
+}
+
+#submissions > #reviewDesk {
+  grid-column: 1 / -1;
 }
 
 #reviewDesk .section-head {
