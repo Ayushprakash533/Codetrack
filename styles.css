@@ -2299,10 +2299,11 @@ summary::-webkit-details-marker {
   flex-direction: column;
   gap: 20px;
   width: 100%;
-  min-height: 720px;
-  padding: 28px 32px 36px;
-  border-radius: 34px;
-  overflow: visible;
+  height: 820px;
+  max-height: 820px;
+  padding: 28px 32px 28px;
+  border-radius: 18px;
+  overflow: hidden;
 }
 
 #reviewDesk .section-head {
@@ -2342,10 +2343,16 @@ summary::-webkit-details-marker {
 
 #submissionList {
   flex: 1 1 auto;
-  min-height: auto;
-  overflow: visible;
-  padding-right: 0;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 10px;
   gap: 20px;
+}
+
+#submissionList .submission {
+  border-radius: 16px;
+  min-height: 320px;
 }
 
 #submissionList::-webkit-scrollbar {
@@ -2687,8 +2694,11 @@ summary::-webkit-details-marker {
   }
 
   #reviewDesk {
-    min-height: auto;
+    height: auto;
+    max-height: none;
     padding: 22px 20px 24px;
+    border-radius: 16px;
+    overflow: visible;
   }
 
   #reviewDesk .section-head {
