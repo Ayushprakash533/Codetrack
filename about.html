@@ -16,7 +16,7 @@
   <script defer src="theme.js"></script>
   <script defer src="app.js"></script>
 </head>
-<body>
+<body class="about-page">
   <!-- Announcement bar shown at the top of the about page -->
   <div class="announcement">New CodeTrack classroom release is live. <a href="exercises.html" data-hide-for-role="user">Explore the workspace →</a></div>
   <div class="page">
@@ -43,7 +43,7 @@
       </div>
     </header>
 
-    <main>
+    <main class="about-main">
       <!-- Hero section introducing the platform mission -->
       <section class="hero code-hero">
         <div class="hero-copy">
@@ -104,9 +104,11 @@
       </section>
 
       <!-- Feature summary section describing the main product focus areas -->
-      <section class="section">
+      <section class="section about-section">
         <div class="section-head">
-          <h2 class="section-title">What We Focus On</h2>
+          <div>
+            <h2 class="section-title">What We Focus On</h2>
+          </div>
         </div>
         <div class="section-note">CodeTrack focuses on the full teaching loop: assign, submit, review, revise, and track progress with less friction.</div>
         <div class="tile-grid">
@@ -134,9 +136,11 @@
       </section>
 
       <!-- Audience section explaining who the platform is designed for -->
-      <section class="section">
+      <section class="section about-section">
         <div class="section-head">
-          <h2 class="section-title">Who It’s For</h2>
+          <div>
+            <h2 class="section-title">Who It’s For</h2>
+          </div>
         </div>
         <div class="info-list">
           <span>Bootcamps that need consistent exercise and review workflows</span>
@@ -160,7 +164,7 @@
       </section>
 
       <!-- Closing callout that directs visitors toward contact and adoption -->
-      <section class="platform-strip">
+      <section class="platform-strip about-strip">
         <div class="strip-card">
           <strong>CodeTrack is designed to support better teaching decisions, not just collect code submissions.</strong>
           <span><a href="contact.html">Contact us</a> if you want to use it for your classroom, bootcamp, or internal training team.</span>
