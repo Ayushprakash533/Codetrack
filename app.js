@@ -19,6 +19,29 @@ const DEFAULT_REDIRECTS = {
   user: "index.html",
   pro: "index.html"
 };
+const ROLE_ALLOWED_PAGES = {
+  user: new Set([
+    "index.html",
+    "submissions.html",
+    "progress.html",
+    "about.html",
+    "contact.html",
+    "faq.html",
+    "login.html",
+    "signup.html"
+  ]),
+  pro: new Set([
+    "index.html",
+    "exercises.html",
+    "submissions.html",
+    "progress.html",
+    "about.html",
+    "contact.html",
+    "faq.html",
+    "login.html",
+    "signup.html"
+  ])
+};
 let activeCaptchaAnswer = null;
 
 function normalizeRole(role) {
@@ -71,6 +94,29 @@ async function postJSON(path, payload) {
 
 function currentRole() {
   return normalizeRole(localStorage.getItem("codetrack_user_role") || "");
+}
+
+function normalizePageName(page) {
+  return String(page || "")
+    .split("?")[0]
+    .split("#")[0]
+    .split("/")
+    .pop()
+    .trim() || "index.html";
+}
+
+function canRoleAccessPage(role, page) {
+  const normalizedRole = normalizeRole(role);
+  const normalizedPage = normalizePageName(page);
+  const allowedPages = ROLE_ALLOWED_PAGES[normalizedRole];
+  if (!allowedPages) return true;
+  return allowedPages.has(normalizedPage);
+}
+
+function resolvePostAuthDestination(role, requestedPage = "") {
+  const fallback = DEFAULT_REDIRECTS[normalizeRole(role)] || "index.html";
+  if (!requestedPage) return fallback;
+  return canRoleAccessPage(role, requestedPage) ? normalizePageName(requestedPage) : fallback;
 }
 
 function currentUserName() {
@@ -139,7 +185,7 @@ function enforcePageAccess() {
   if (!requiredRole) return;
 
   if (currentRole() !== requiredRole) {
-    window.location.href = DEFAULT_REDIRECTS[currentRole()] || "index.html";
+    window.location.href = resolvePostAuthDestination(currentRole());
   }
 }
 
@@ -251,7 +297,7 @@ function wireAuthForm(form) {
 
       toast(mode === "signup" ? "Account created successfully." : "Signed in successfully.");
       const next = new URLSearchParams(window.location.search).get("next");
-      const destination = next || DEFAULT_REDIRECTS[normalizedRole] || "index.html";
+      const destination = resolvePostAuthDestination(normalizedRole, next || "");
       setTimeout(() => (window.location.href = destination), 600);
     } catch (err) {
       const message = err?.message || "Authentication failed.";
