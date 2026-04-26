@@ -44,40 +44,112 @@
       </div>
     </header>
 
-    <main class="section">
-      <!-- FAQ header introducing the help content -->
-      <div class="section-head">
-        <h1 class="section-title">Frequently asked questions</h1>
-        <span class="pill">CodeTrack basics</span>
-      </div>
+    <main>
+      <!-- FAQ hero introducing the page with a support-style visual -->
+      <section class="hero code-hero faq-hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Help Center</p>
+          <h1>Answers for students, teachers, and training teams.</h1>
+          <p class="lead">Browse the most common CodeTrack questions about exercises, submissions, progress, feedback, and platform setup. The goal is to make the product easier to understand before and after login.</p>
+          <div class="hero-badges">
+            <span class="hero-badge">Public FAQ</span>
+            <span class="hero-badge">Student workflows</span>
+            <span class="hero-badge">Teacher support</span>
+          </div>
+        </div>
+        <div class="hero-card faq-card">
+          <div class="floating-label">Support</div>
+          <div class="faq-showcase" aria-hidden="true">
+            <div class="faq-browser-bar">Support</div>
+            <div class="faq-showcase-screen">
+              <div class="mission-window">
+                <div class="mission-window-top">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+                <div class="mission-grid">
+                  <div class="mission-column">
+                    <div class="mission-chip">Onboarding</div>
+                    <div class="mission-line short"></div>
+                    <div class="mission-line"></div>
+                    <div class="mission-line mid"></div>
+                  </div>
+                  <div class="mission-column emphasis">
+                    <div class="mission-card">
+                      <strong>24h</strong>
+                      <span>typical response window</span>
+                    </div>
+                    <div class="mission-stat">
+                      <span class="bar"></span>
+                      <span class="bar mid"></span>
+                      <span class="bar short"></span>
+                    </div>
+                  </div>
+                  <div class="mission-column">
+                    <div class="mission-chip">Support</div>
+                    <div class="mission-line"></div>
+                    <div class="mission-line short"></div>
+                    <div class="mission-line mid"></div>
+                  </div>
+                </div>
+                <div class="mission-footer">
+                  <div class="mission-pill">Setup help</div>
+                  <div class="mission-pill">Training teams</div>
+                  <div class="mission-pill">Product questions</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <h3>Support for teachers, programs, and training teams</h3>
+          <p class="muted">The FAQ stays public so visitors can understand the platform even before they create an account or sign in.</p>
+        </div>
+      </section>
 
-      <!-- FAQ accordion containing the most common project questions -->
-      <div class="tile">
-        <details open>
-          <summary>What is CodeTrack used for?</summary>
-          <p class="muted">CodeTrack helps teachers create coding exercises, collect multiple student submissions, review each attempt, and track progress over time.</p>
-        </details>
-        <details>
-          <summary>Can students submit more than once for the same exercise?</summary>
-          <p class="muted">Yes. Every attempt is stored separately so teachers can review the full history and students can see how their work improves.</p>
-        </details>
-        <details>
-          <summary>How does teacher feedback work?</summary>
-          <p class="muted">Teachers can change submission status, add review comments, and keep that feedback attached to the exact attempt it belongs to.</p>
-        </details>
-        <details>
-          <summary>Can students see their improvement?</summary>
-          <p class="muted">Yes. The progress area shows attempt history, scores, and the latest review notes so students can understand how their performance changes over time.</p>
-        </details>
-        <details>
-          <summary>Does the platform store data after refresh?</summary>
-          <p class="muted">Yes. The current version uses a Node.js and Express backend connected to MongoDB Atlas, so exercises, submissions, reviews, and comments remain available after refresh and across deployments.</p>
-        </details>
-        <details>
-          <summary>Who is this platform for?</summary>
-          <p class="muted">It works well for coding bootcamps, colleges, internal training teams, and any instructor-led programming environment.</p>
-        </details>
-      </div>
+      <!-- FAQ content section containing the accordion and quick guidance -->
+      <section class="section faq-section">
+        <div class="faq-grid">
+          <article class="tile faq-intro">
+            <div class="section-head">
+              <h2 class="section-title">Frequently asked questions</h2>
+              <span class="pill">CodeTrack basics</span>
+            </div>
+            <p class="muted">These answers cover the main platform flow from creating exercises to reviewing attempts and tracking improvement over time.</p>
+            <div class="info-list">
+              <span>Students can submit more than one attempt.</span>
+              <span>Teachers can leave feedback linked to each submission.</span>
+              <span>Progress history stays visible across sessions.</span>
+            </div>
+          </article>
+
+          <article class="tile faq-accordion">
+            <details open>
+              <summary>What is CodeTrack used for?</summary>
+              <p class="muted">CodeTrack helps teachers create coding exercises, collect multiple student submissions, review each attempt, and track progress over time.</p>
+            </details>
+            <details>
+              <summary>Can students submit more than once for the same exercise?</summary>
+              <p class="muted">Yes. Every attempt is stored separately so teachers can review the full history and students can see how their work improves.</p>
+            </details>
+            <details>
+              <summary>How does teacher feedback work?</summary>
+              <p class="muted">Teachers can review submissions, assign scores, and attach written comments directly to the attempt being evaluated.</p>
+            </details>
+            <details>
+              <summary>Can students see their improvement?</summary>
+              <p class="muted">Yes. The progress area shows attempt history, scores, and the latest review notes so students can understand how their performance changes over time.</p>
+            </details>
+            <details>
+              <summary>Does the platform store data after refresh?</summary>
+              <p class="muted">Yes. The current version uses a Node.js and Express backend connected to MongoDB Atlas, so exercises, submissions, reviews, and comments remain available after refresh and across deployments.</p>
+            </details>
+            <details>
+              <summary>Who is this platform for?</summary>
+              <p class="muted">It works well for coding bootcamps, colleges, internal training teams, and any instructor-led programming environment.</p>
+            </details>
+          </article>
+        </div>
+      </section>
     </main>
   </div>
 </body>
