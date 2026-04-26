@@ -2018,118 +2018,7 @@ summary::-webkit-details-marker {
 
 .faq-hero {
   align-items: center;
-}
-
-.faq-card {
-  gap: 18px;
-}
-
-.faq-showcase {
-  position: relative;
-  margin-top: 8px;
-  padding: 18px 18px 22px;
-  border-radius: 34px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(248, 251, 245, 0.9)),
-    linear-gradient(135deg, rgba(23, 163, 74, 0.08), transparent 56%);
-  border: 1px solid rgba(7, 11, 20, 0.1);
-  box-shadow: 0 24px 60px rgba(7, 11, 20, 0.12);
-}
-
-.faq-showcase::before {
-  content: "";
-  position: absolute;
-  inset: -12px 16px auto;
-  height: 10px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, #20d763, rgba(7, 11, 20, 0.88) 52%, rgba(108, 140, 255, 0.34));
-}
-
-.faq-browser-bar {
-  margin: 14px 4px 0;
-  padding: 16px 20px;
-  border-radius: 22px;
-  background: rgba(255, 255, 255, 0.98);
-  border: 1px solid rgba(23, 163, 74, 0.24);
-  color: #171c25;
-  font-size: 20px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  box-shadow: 0 6px 16px rgba(7, 11, 20, 0.08);
-}
-
-.faq-showcase-screen {
-  position: relative;
-  margin-top: -2px;
-  padding: 28px 18px 20px;
-  border-radius: 0 0 30px 30px;
-  background:
-    repeating-linear-gradient(180deg, transparent 0 44px, rgba(32, 215, 99, 0.18) 44px 46px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.1) 0 34%, transparent 34%),
-    linear-gradient(180deg, #171b22, #0c121a 58%, #070b14);
-  border: 1px solid rgba(7, 11, 20, 0.1);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
-}
-
-.faq-showcase-screen .mission-window {
-  min-height: 332px;
-  border-radius: 32px;
-  padding: 22px;
-}
-
-.faq-showcase-screen .mission-window-top span {
-  width: 16px;
-  height: 16px;
-}
-
-.faq-showcase-screen .mission-grid {
-  gap: 18px;
-}
-
-.faq-showcase-screen .mission-column {
-  padding: 24px;
-  border-radius: 24px;
-}
-
-.faq-showcase-screen .mission-chip {
-  padding: 12px 20px;
-  font-size: 14px;
-}
-
-.faq-showcase-screen .mission-line {
-  height: 16px;
-}
-
-.faq-showcase-screen .mission-card {
-  padding: 24px;
-  border-radius: 22px;
-}
-
-.faq-showcase-screen .mission-card strong {
-  font-size: 50px;
-}
-
-.faq-showcase-screen .mission-card span {
-  font-size: 16px;
-}
-
-.faq-showcase-screen .mission-stat {
-  min-height: 96px;
-  gap: 12px;
-}
-
-.faq-showcase-screen .mission-stat .bar {
-  width: 24px;
-}
-
-.faq-showcase-screen .mission-footer {
-  padding-top: 8px;
-}
-
-.faq-showcase-screen .mission-pill {
-  padding: 10px 18px;
-  font-size: 14px;
-  background: rgba(255, 255, 255, 0.08);
+  grid-template-columns: 1fr;
 }
 
 .faq-section {
@@ -2164,23 +2053,6 @@ summary::-webkit-details-marker {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.24), transparent),
     var(--card);
-}
-
-[data-theme="dark"] .faq-showcase {
-  background:
-    linear-gradient(180deg, rgba(18, 26, 43, 0.92), rgba(11, 18, 32, 0.96)),
-    linear-gradient(135deg, rgba(108, 140, 255, 0.16), transparent 56%);
-  border-color: rgba(108, 140, 255, 0.14);
-}
-
-[data-theme="dark"] .faq-browser-bar {
-  background: rgba(12, 18, 30, 0.96);
-  border-color: rgba(108, 140, 255, 0.16);
-  color: #eef3ff;
-}
-
-[data-theme="dark"] .faq-showcase-screen {
-  border-color: rgba(108, 140, 255, 0.12);
 }
 
 .footer {
@@ -3093,66 +2965,6 @@ summary::-webkit-details-marker {
   .hero-showcase {
     padding: 12px;
     border-radius: 20px;
-  }
-
-  .faq-showcase {
-    padding: 14px 14px 18px;
-    border-radius: 26px;
-  }
-
-  .faq-browser-bar {
-    font-size: 16px;
-    padding: 12px 16px;
-  }
-
-  .faq-showcase-screen {
-    padding: 18px 12px 14px;
-    border-radius: 0 0 24px 24px;
-  }
-
-  .faq-showcase-screen .mission-window {
-    min-height: 240px;
-    padding: 14px;
-    border-radius: 22px;
-  }
-
-  .faq-showcase-screen .mission-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .faq-showcase-screen .mission-column {
-    padding: 16px;
-    border-radius: 18px;
-  }
-
-  .faq-showcase-screen .mission-line {
-    height: 10px;
-  }
-
-  .faq-showcase-screen .mission-chip,
-  .faq-showcase-screen .mission-pill {
-    font-size: 11px;
-    padding: 8px 12px;
-  }
-
-  .faq-showcase-screen .mission-card {
-    padding: 16px;
-  }
-
-  .faq-showcase-screen .mission-card strong {
-    font-size: 34px;
-  }
-
-  .faq-showcase-screen .mission-card span {
-    font-size: 13px;
-  }
-
-  .faq-showcase-screen .mission-stat {
-    min-height: 68px;
-  }
-
-  .faq-showcase-screen .mission-stat .bar {
-    width: 16px;
   }
 
   .showcase-photo {
