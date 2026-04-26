@@ -218,7 +218,7 @@
       .slice(0, 4);
 
     if (!pending.length) {
-      queueList.innerHTML = '<div class="empty">No submissions are awaiting feedback.</div>';
+      queueList.innerHTML = '<div class="empty">No recent student submissions.</div>';
       queueMeta.textContent = "Instructor queue is clear.";
       return;
     }
@@ -234,7 +234,7 @@
       })
       .join("");
 
-    queueMeta.textContent = `${pending.length} awaiting instructor feedback`;
+    queueMeta.textContent = `${pending.length} recent submissions ready to open`;
   }
 
   function renderExercises() {
