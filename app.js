@@ -232,8 +232,10 @@ function wireAuthForm(form) {
       }
     }
 
-    try {
-      const response = await postJSON("/auth", {
+    try 
+    {
+      const response = await postJSON("/auth", 
+        {
         mode,
         email,
         password,

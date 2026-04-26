@@ -30,6 +30,7 @@
   let sortMode = "newest";
   let pendingReadMark = false;
   let statePollId = null;
+  const reviewDrafts = new Map();
 
   function currentRole() {
     return normalizeRole(localStorage.getItem("codetrack_user_role") || "");
@@ -301,6 +302,35 @@
     return status === "approved" ? "success" : status === "changes" ? "warn" : "info";
   }
 
+  function getReviewDraft(submission) {
+    const draft = reviewDrafts.get(String(submission.id));
+    if (!draft) {
+      return {
+        status: submission.status,
+        score: submission.score ?? "",
+        comment: submission.latestComment || ""
+      };
+    }
+
+    return {
+      status: draft.status ?? submission.status,
+      score: draft.score ?? (submission.score ?? ""),
+      comment: draft.comment ?? (submission.latestComment || "")
+    };
+  }
+
+  function setReviewDraftValue(id, field, value) {
+    const key = String(id || "");
+    if (!key) return;
+    const draft = reviewDrafts.get(key) || {};
+    draft[field] = value;
+    reviewDrafts.set(key, draft);
+  }
+
+  function clearReviewDraft(id) {
+    reviewDrafts.delete(String(id));
+  }
+
   function renderReviewHistory(submission) {
     const reviews = Array.isArray(submission.reviews) ? [...submission.reviews].sort((a, b) => b.createdAt - a.createdAt) : [];
     if (!reviews.length) {
@@ -347,6 +377,7 @@
       .map((submission) => {
         const exercise = state.exercises.find((item) => sameId(item.id, submission.exerciseId));
         const delta = calcDelta(submission);
+        const draft = getReviewDraft(submission);
 
         return `<article class="card compact submission" id="card-${submission.id}">
           <div class="card-row">
@@ -370,24 +401,31 @@
             <label>
               <span>Status</span>
               <select data-action="status" data-id="${submission.id}">
-                <option value="submitted" ${submission.status === "submitted" ? "selected" : ""}>Needs review</option>
-                <option value="approved" ${submission.status === "approved" ? "selected" : ""}>Approved</option>
-                <option value="changes" ${submission.status === "changes" ? "selected" : ""}>Changes requested</option>
+                <option value="submitted" ${draft.status === "submitted" ? "selected" : ""}>Needs review</option>
+                <option value="approved" ${draft.status === "approved" ? "selected" : ""}>Approved</option>
+                <option value="changes" ${draft.status === "changes" ? "selected" : ""}>Changes requested</option>
               </select>
             </label>
             <label>
               <span>Score (0-100)</span>
-              <input type="number" min="0" max="100" data-action="score" data-id="${submission.id}" value="${submission.score || ""}" placeholder="Enter score">
+              <input type="number" min="0" max="100" data-action="score" data-id="${submission.id}" value="${draft.score}" placeholder="Enter score">
             </label>
             <label class="grow">
               <span>Instructor comment</span>
-              <textarea rows="2" data-action="comment" data-id="${submission.id}" placeholder="Give concrete feedback">${escapeHTML(submission.latestComment || "")}</textarea>
+              <textarea rows="2" data-action="comment" data-id="${submission.id}" placeholder="Give concrete feedback">${escapeHTML(draft.comment)}</textarea>
             </label>
             <button class="solid" data-action="save" data-id="${submission.id}" type="button">Save</button>
           </div>
         </article>`;
       })
       .join("");
+  }
+
+  function handleReviewDraftInput(event) {
+    const field = event.target.dataset.action;
+    const id = event.target.dataset.id;
+    if (!field || !id || !["status", "score", "comment"].includes(field)) return;
+    setReviewDraftValue(id, field, event.target.value);
   }
 
   function renderProgress() {
@@ -662,6 +700,7 @@
         method: "PATCH",
         body: JSON.stringify({ status, comment, scoreOverride })
       });
+      clearReviewDraft(id);
       await fetchState();
       renderAll();
       const nextCard = document.querySelector(`#card-${id}`);
@@ -826,6 +865,8 @@
     $("newExerciseForm")?.addEventListener("submit", handleExerciseForm);
     $("submissionForm")?.addEventListener("submit", handleSubmissionForm);
     $("submissionList")?.addEventListener("click", handleReviewActions);
+    $("submissionList")?.addEventListener("input", handleReviewDraftInput);
+    $("submissionList")?.addEventListener("change", handleReviewDraftInput);
     $("queueList")?.addEventListener("click", handleQueueJump);
     $("reviewExerciseFilter")?.addEventListener("change", renderSubmissions);
     $("reviewStatusFilter")?.addEventListener("change", renderSubmissions);
